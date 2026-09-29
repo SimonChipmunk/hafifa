@@ -35,6 +35,12 @@ service cloud.firestore {
         || (firstSetup() && id == myId()));
       allow delete: if isAdmin();
     }
+    // Profile photos: anyone can see them (they show on the login screen); each person changes only their own, the main mentor anyone's.
+    match /hafifa_photos/{id} {
+      allow read: if true;
+      allow write: if (claimed() && (id == myId() || me().role == 'admin'))
+        && (request.resource == null || (request.resource.data.img is string && request.resource.data.img.size() < 60000));
+    }
     match /hafifa_invites/{id} {
       allow read, write: if isAdmin();
     }

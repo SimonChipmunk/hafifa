@@ -98,6 +98,7 @@
   .top-in { max-width: 1160px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
   .brand { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text); font-family: 'Rubik', sans-serif; font-weight: 700; font-size: 1.15rem; }
   .brand-ico { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: var(--accent-soft); font-size: 1.2rem; }
+  .duck-img { display: inline-block; vertical-align: middle; object-fit: contain; }
   .nav { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
   .nav::-webkit-scrollbar { display: none; }
   .nav a { white-space: nowrap; text-decoration: none; color: var(--muted); font-weight: 500; padding: 8px 14px; border-radius: 999px; }
@@ -159,6 +160,12 @@
   .av { display: inline-grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 50%; font-family: 'Rubik', sans-serif; font-weight: 700; background: hsl(var(--h) 70% var(--av-l)); color: hsl(var(--h) 50% var(--av-t)); }
   .av.sm { width: 32px; height: 32px; font-size: .85rem; }
   .av.lg { width: 56px; height: 56px; font-size: 1.3rem; }
+  .av.xl { width: 120px; height: 120px; font-size: 2.6rem; }
+  .av.photo { background: var(--surface-2); overflow: hidden; }
+  .av.photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .av-btn { border: 0; padding: 0; background: none; cursor: pointer; border-radius: 50%; display: inline-flex; }
+  .av-btn:hover .av { box-shadow: 0 0 0 3px var(--accent-soft); }
+  .photo-edit { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 8px; }
 
   .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
   .field > span { font-weight: 500; font-size: .9rem; }
@@ -519,7 +526,7 @@
   const DEMO = ['admin', 'mentor', 'trainee'].indexOf(new URLSearchParams(location.search).get('demo')) >= 0 ? new URLSearchParams(location.search).get('demo') : null;
   const useCloud = !DEMO && !!(cfg && typeof cfg === 'object' && cfg.projectId && cfg.apiKey);
   const memStore = {};
-  const COLS = ['users', 'sprints', 'questions', 'messages', 'absences', 'settings', 'issues', 'talks'];
+  const COLS = ['users', 'sprints', 'questions', 'messages', 'absences', 'settings', 'issues', 'talks', 'photos'];
   const LS_DB = 'hafifa_db_v1', LS_SESSION = 'hafifa_session', LS_SEEN = 'hafifa_seen';
 
   const app = document.getElementById('app');
@@ -558,7 +565,7 @@
      Public (readable before sign-in): hafifa_names (names for the login list), hafifa_claims (who has signed up), hafifa_setup/owner.
      Everything else needs a signed-in, claimed account; see the rules in README. */
   let fb = null, authUser = null, authReady = false, dataStarted = false, claiming = false, unsubs = [];
-  const pub = { names: {}, claims: {}, invites: {}, owner: undefined, namesLoaded: false, claimsLoaded: false };
+  const pub = { names: {}, claims: {}, invites: {}, photos: {}, owner: undefined, namesLoaded: false, claimsLoaded: false };
   const LOGIN_DOMAIN = 'example.com';
   /* Firebase requires at least 6 characters. */
   const PW_MIN = useCloud ? 6 : 4;
@@ -589,6 +596,8 @@
         remove: (c, id) => fs.deleteDoc(fs.doc(colRef(c), id))
       };
       const intoMap = snap => { const m = {}; snap.docs.forEach(d => { m[d.id] = Object.assign({}, d.data(), { id: d.id }); }); return m; };
+      /* Profile photos are public so they can show on the login screen. */
+      fs.onSnapshot(colRef('photos'), snap => { pub.photos = intoMap(snap); scheduleRender(); }, err => console.warn(err));
       fs.onSnapshot(colRef('names'), { includeMetadataChanges: true }, snap => {
         pub.names = intoMap(snap); if (!snap.metadata.fromCache) pub.namesLoaded = true; scheduleRender();
       }, dataErr);
@@ -639,7 +648,7 @@
         }));
         listen(colRef('settings'), intoDb('settings'));
       } else {
-        COLS.filter(c => c !== 'users').forEach(c => listen(colRef(c), intoDb(c)));
+        COLS.filter(c => c !== 'users' && c !== 'photos').forEach(c => listen(colRef(c), intoDb(c)));
         if (u.role === 'admin') listen(colRef('invites'), snap => { pub.invites = {}; snap.docs.forEach(d => { pub.invites[d.id] = d.data(); }); });
       }
     });
@@ -696,8 +705,11 @@
   function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
   const byName = (a, b) => a.name.localeCompare(b.name, 'he');
   const half = x => Math.round(x * 2) / 2;
+  /* The site's duck (the same picture as the browser-tab icon), as an inline image of the given size. */
+  const DUCK_SRC = (document.querySelector('link[rel="icon"]') || {}).href || '';
+  const duck = size => '<img class="duck-img" src="' + DUCK_SRC + '" width="' + size + '" height="' + size + '" alt="" aria-hidden="true">';
   let toastTimer;
-  function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2600); }
+  function toast(msg, withDuck) { const t = $('toast'); t.textContent = msg; if (withDuck) t.insertAdjacentHTML('beforeend', ' ' + duck(20)); t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2600); }
 
   /* SHA-256 in plain JS so hashing also works on plain http (where crypto.subtle is missing). */
   const PRIMES = []; for (let n = 2; PRIMES.length < 64; n++) if (PRIMES.every(p => n % p)) PRIMES.push(n);
@@ -883,9 +895,39 @@
     if (sm.status === 'finished') return G(t, 'סיים', 'סיימה', 'סיים/ה') + ' את כל החלקים';
     return 'עוד לא נבנתה תכנית';
   }
+  /* Profile photos: a small square JPEG stored as text, in a public collection (cloud) or with the rest of the data (local). */
+  const photoOf = id => { const x = useCloud ? pub.photos[id] : db.photos[id]; return (x && x.img) || ''; };
+  function setPhoto(id, img) {
+    if (useCloud) return img ? pubSet('photos', id, { img, at: Date.now() }) : pubDel('photos', id);
+    if (img) put('photos', { id, img, at: Date.now() }); else del('photos', id);
+  }
+  /* Centre-crop to a square and shrink, lowering quality until it fits comfortably in one database document. */
+  function shrinkPhoto(file) {
+    return new Promise((resolve, reject) => {
+      const rd = new FileReader();
+      rd.onerror = () => reject(new Error('read'));
+      rd.onload = () => {
+        const im = new Image();
+        im.onerror = () => reject(new Error('image'));
+        im.onload = () => {
+          const S = 192, c = document.createElement('canvas'); c.width = c.height = S;
+          const g = c.getContext('2d'), side = Math.min(im.width, im.height);
+          g.fillStyle = '#fff'; g.fillRect(0, 0, S, S);
+          g.drawImage(im, (im.width - side) / 2, (im.height - side) / 2, side, side, 0, 0, S, S);
+          let q = 0.85, url = c.toDataURL('image/jpeg', q);
+          while (url.length > 45000 && q > 0.4) { q -= 0.1; url = c.toDataURL('image/jpeg', q); }
+          resolve(url);
+        };
+        im.src = rd.result;
+      };
+      rd.readAsDataURL(file);
+    });
+  }
   function avatar(u, size) {
     let h = 0; const n = (u && u.name) || '?';
     for (let i = 0; i < n.length; i++) h = (h * 31 + n.charCodeAt(i)) % 360;
+    const img = u && photoOf(u.id);
+    if (img) return '<span class="av photo ' + (size || '') + '" aria-hidden="true"><img src="' + esc(img) + '" alt=""></span>';
     return '<span class="av ' + (size || '') + '" style="--h:' + h + '" aria-hidden="true">' + esc(n.trim().charAt(0) || '?') + '</span>';
   }
   function seenKey(m, tid) { return m.id + ':' + tid; }
@@ -943,7 +985,7 @@
 
   function view() {
     lastRoute = null;
-    const loader = '<div class="center"><div class="auth-hero"><div class="loader">🌱</div><p>טוען את החפיפה…</p></div></div>';
+    const loader = '<div class="center"><div class="auth-hero"><div class="loader">' + duck(52) + '</div><p>טוען את החפיפה…</p></div></div>';
     if (loadError) return errorView();
     let m;
     if (useCloud) {
@@ -983,9 +1025,9 @@
       if (m.role === 'admin') links.push(['#/users', 'משתמשים', r.page === 'users'], ['#/plan', 'תכנית החפיפה', r.page === 'plan'], ['#/holidays', 'חגים', r.page === 'holidays']);
     }
     return '<header class="top"><div class="top-in">' +
-      '<a class="brand" href="#/"><span class="brand-ico">🌱</span><span>מסלול החפיפה</span></a>' +
+      '<a class="brand" href="#/"><span class="brand-ico">' + duck(30) + '</span><span>מסלול החפיפה</span></a>' +
       '<nav class="nav" aria-label="ניווט ראשי">' + links.map(([h, l, on]) => '<a href="' + h + '" class="' + (on ? 'on' : '') + '"' + (on ? ' aria-current="page"' : '') + '>' + l + '</a>').join('') + '</nav>' +
-      '<div class="me">' + syncPill() + avatar(m, 'sm') + '<span class="me-name">' + esc(m.name) + '<small>' + roleName(m) + '</small></span>' +
+      '<div class="me">' + syncPill() + '<button class="av-btn" data-act="photoEdit" data-id="' + m.id + '" title="תמונת פרופיל" aria-label="תמונת פרופיל">' + avatar(m, 'sm') + '</button>' + '<span class="me-name">' + esc(m.name) + '<small>' + roleName(m) + '</small></span>' +
       (useCloud ? '<button class="icon-btn" data-act="changePw" title="שינוי סיסמה" aria-label="שינוי סיסמה">🔑</button>' : '') +
       '<button class="btn ghost sm" data-act="logout">יציאה</button></div></div></header>';
   }
@@ -1008,7 +1050,7 @@
 
   function setupView() {
     return '<div class="center"><div class="card auth">' +
-      '<div class="auth-hero"><div class="hero-ico">🌱</div><h1>ברוכים הבאים למסלול החפיפה</h1><p>נתחיל ביצירת החופף הראשי, מי שמנהל את כל החפיפה.</p></div>' +
+      '<div class="auth-hero"><div class="hero-ico">' + duck(64) + '</div><h1>ברוכים הבאים למסלול החפיפה</h1><p>נתחיל ביצירת החופף הראשי, מי שמנהל את כל החפיפה.</p></div>' +
       '<form data-form="setup" autocomplete="off">' +
       '<label class="field"><span>השם שלך</span><input type="text" name="name" id="su-name" data-keep required maxlength="40"></label>' +
       '<label class="field"><span>סיסמה</span><input type="password" name="pw" required minlength="' + PW_MIN + '" autocomplete="new-password"><small>לפחות ' + PW_MIN + ' תווים</small></label>' +
@@ -1037,7 +1079,7 @@
         '<div class="row"><button class="btn primary grow"' + (ui.busy ? ' disabled' : '') + '>' + (ui.busy ? 'רגע…' : first ? 'שמירה וכניסה' : 'כניסה') + '</button><button type="button" class="btn ghost" data-act="loginBack">זה לא אני</button></div></form>';
     } else {
       const people = loginPeople();
-      inner = '<div class="auth-hero"><div class="hero-ico">🌱</div><h1>מי נכנס/ת?</h1><p>בוחרים את השם שלך מהרשימה</p></div>' +
+      inner = '<div class="auth-hero"><div class="hero-ico">' + duck(64) + '</div><h1>מי נכנס/ת?</h1><p>בוחרים את השם שלך מהרשימה</p></div>' +
         (people.length ? '<div class="who">' + people.map(x => '<button type="button" data-act="loginPick" data-id="' + x.id + '">' + avatar(x, 'sm') + '<span class="nm">' + esc(x.name) + '</span></button>').join('') + '</div>'
           : '<p class="muted" style="text-align:center">עוד אין משתמשים.</p>');
     }
@@ -1521,7 +1563,7 @@
       '<div class="full"><button class="btn primary">יצירת משתמש</button></div></form></section>';
     const row = u => {
       const kids = u.role !== 'trainee' ? all.filter(x => x.mentorId === u.id).length : 0;
-      return '<tr><td><span class="tn" style="display:inline-flex;align-items:center;gap:8px;font-weight:600">' + avatar(u, 'sm') + esc(u.name) + (u.id === m.id ? ' <span class="badge acc">' + G(m, 'אתה', 'את', 'את/ה') + '</span>' : '') + '</span></td>' +
+      return '<tr><td><span class="tn" style="display:inline-flex;align-items:center;gap:8px;font-weight:600"><button class="av-btn" data-act="photoEdit" data-id="' + u.id + '" title="תמונת פרופיל" aria-label="תמונת הפרופיל של ' + esc(u.name) + '">' + avatar(u, 'sm') + '</button>' + esc(u.name) + (u.id === m.id ? ' <span class="badge acc">' + G(m, 'אתה', 'את', 'את/ה') + '</span>' : '') + '</span></td>' +
         '<td class="nw">' + roleName(u) + '</td>' +
         '<td><select data-change="setGender" data-id="' + u.id + '" aria-label="לשון פנייה ל' + esc(u.name) + '" style="min-height:36px;padding:4px 8px">' +
         [['', 'לא צוין'], ['m', 'זכר'], ['f', 'נקבה']].map(([v, l]) => '<option value="' + v + '"' + ((u.gender || '') === v ? ' selected' : '') + '>' + l + '</option>').join('') + '</select></td>' +
@@ -1635,7 +1677,7 @@
         if (isNew) {
           const order = sprintsOf(tid).reduce((a, x) => Math.max(a, x.order || 0), 0) + 1;
           put('sprints', { id: uid(), traineeId: tid, title, desc: fv(f, 'desc'), days, status: 'todo', extensions: [], order, createdBy: m.id, createdAt: Date.now() });
-          toast('הפורטנייט נוסף 🌱');
+          toast('הפורטנייט נוסף', true);
           return;
         }
         const n = Object.assign({}, s, { title, desc: fv(f, 'desc'), days });
@@ -1668,10 +1710,10 @@
   /* ================= Actions ================= */
   function confetti() {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const fx = $('fx'), em = ['🎉', '✨', '🌟', '💜', '🎊', '🌱', '💛'];
+    const fx = $('fx'), em = ['🎉', '✨', '🌟', '💜', '🎊', 'duck', '💛'];
     for (let i = 0; i < 30; i++) {
       const s = document.createElement('span');
-      s.textContent = em[i % em.length];
+      if (em[i % em.length] === 'duck') s.innerHTML = duck(30); else s.textContent = em[i % em.length];
       s.style.left = (Math.random() * 100) + 'vw';
       s.style.animationDelay = (Math.random() * .5) + 's';
       s.style.setProperty('--x', (Math.random() * 160 - 80) + 'px');
@@ -1774,6 +1816,7 @@
     if (db.absences[u.id]) del('absences', u.id);
     Object.values(db.users).filter(x => x.mentorId === u.id).forEach(x => put('users', Object.assign({}, x, { mentorId: null })));
     del('users', u.id);
+    if (photoOf(u.id)) setPhoto(u.id, null);
     if (useCloud) { pubDel('names', u.id); pubDel('claims', u.id); pubDel('invites', u.id); }
   }
 
@@ -1782,6 +1825,33 @@
       ui.loginId = null; ui.loginErr = ''; ui.seenPrev = {}; location.hash = '';
       if (useCloud && fb) { fb.am.signOut(fb.au); return; }
       lsDel(LS_SESSION); render();
+    },
+    photoEdit(el) {
+      const m = me(), u = db.users[el.dataset.id];
+      if (!u || (u.id !== m.id && m.role !== 'admin')) return;
+      let next = photoOf(u.id);
+      const self = u.id === m.id;
+      openDialog({
+        title: '📷 ' + (self ? 'תמונת הפרופיל שלי' : 'תמונת הפרופיל של ' + esc(u.name)), ok: 'שמירה',
+        body: '<div class="photo-edit"><span id="phPrev">' + avatar(u, 'xl') + '</span>' +
+          '<label class="btn soft" style="cursor:pointer">בחירת תמונה<input type="file" id="phFile" accept="image/*" style="display:none"></label>' +
+          '<button type="button" class="btn ghost sm" id="phDel"' + (next ? '' : ' hidden') + '>הסרת התמונה</button>' +
+          '<p class="hint" style="margin:0;text-align:center">התמונה נחתכת לריבוע ומופיעה בכל האתר, גם במסך הכניסה.</p></div>',
+        onOpen: f => {
+          const prev = f.querySelector('#phPrev'), del = f.querySelector('#phDel');
+          const show = () => { prev.innerHTML = next ? '<span class="av xl photo"><img src="' + next + '" alt=""></span>' : avatar(Object.assign({}, u, { id: '__none__' }), 'xl'); del.hidden = !next; };
+          f.querySelector('#phFile').addEventListener('change', e => {
+            const file = e.target.files && e.target.files[0]; if (!file) return;
+            shrinkPhoto(file).then(url => { next = url; show(); }, () => { $('dlgErr').textContent = 'לא הצלחנו לקרוא את התמונה. נסו קובץ אחר (JPG או PNG)'; });
+          });
+          del.addEventListener('click', () => { next = ''; show(); });
+        },
+        onOk: () => {
+          if (next === photoOf(u.id)) return;
+          setPhoto(u.id, next || null);
+          toast(next ? 'התמונה נשמרה 📷' : 'התמונה הוסרה');
+        }
+      });
     },
     changePw() {
       openDialog({
