@@ -1,0 +1,71 @@
+rules_version = '2';
+// כללי האבטחה של מסלול החפיפה. מעתיקים את כל הקובץ ל-Firebase: Firestore Database ← Rules ← Publish.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function doc(c, id) { return /databases/$(database)/documents/$(c)/$(id); }
+    function signedIn() { return request.auth != null && request.auth.token.email != null; }
+    // The hidden login e-mail is "<user id>.<generation>@example.com".
+    function myId() { return request.auth.token.email.split('@')[0].split('[.]')[0]; }
+    // The account counts only if it is the one that claimed this name (after a password reset, the old account stops counting).
+    function claimed() { return signedIn() && exists(doc('hafifa_claims', myId())) && get(doc('hafifa_claims', myId())).data.uid == request.auth.uid; }
+    function me() { return get(doc('hafifa_users', myId())).data; }
+    function isAdmin() { return claimed() && me().role == 'admin'; }
+    function isStaff() { return claimed() && me().role in ['admin', 'mentor']; }
+    function canTrainee(tid) {
+      return claimed() && (tid == myId() || me().role == 'admin'
+        || (me().role == 'mentor' && get(doc('hafifa_users', tid)).data.mentorId == myId()));
+    }
+    // Only for the very first sign-up, before any main mentor exists.
+    function firstSetup() { return signedIn() && !exists(doc('hafifa_setup', 'owner')) && getAfter(doc('hafifa_setup', 'owner')).data.userId == myId(); }
+
+    // Readable before sign-in: needed for the login screen.
+    match /hafifa_setup/owner {
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.userId == myId();
+    }
+    match /hafifa_names/{id} {
+      allow read: if true;
+      allow write: if isAdmin() || (firstSetup() && id == myId());
+    }
+    match /hafifa_claims/{id} {
+      allow read: if true;
+      allow create: if signedIn() && id == myId() && request.resource.data.uid == request.auth.uid && (
+        (exists(doc('hafifa_invites', id)) && request.resource.data.code == get(doc('hafifa_invites', id)).data.code)
+        || (firstSetup() && id == myId()));
+      allow delete: if isAdmin();
+    }
+    match /hafifa_invites/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    // The onboarding itself: only signed-in people.
+    match /hafifa_users/{id} {
+      allow read: if claimed();
+      allow write: if isAdmin() || (firstSetup() && id == myId() && request.resource.data.role == 'admin');
+    }
+    match /hafifa_settings/{id} {
+      allow read: if claimed();
+      allow write: if isAdmin();
+    }
+    match /hafifa_absences/{id} {
+      allow read: if claimed() && (isStaff() || id == myId() || id == '_global');
+      allow write: if (id == '_global' && isAdmin()) || (id != '_global' && canTrainee(id));
+    }
+    match /hafifa_talks/{id} {
+      allow read: if claimed() && (isStaff() || resource.data.traineeId == myId());
+      allow write: if isStaff();
+    }
+    // Fortnights, questions, messages and reports: a trainee sees and edits only their own; a mentor, their trainees; the main mentor, everyone.
+    match /{col}/{id} {
+      allow read: if col in ['hafifa_sprints', 'hafifa_questions', 'hafifa_messages', 'hafifa_issues']
+        && claimed() && (isStaff() || resource.data.traineeId == myId());
+      allow create: if col in ['hafifa_sprints', 'hafifa_questions', 'hafifa_messages', 'hafifa_issues']
+        && canTrainee(request.resource.data.traineeId);
+      allow update: if col in ['hafifa_sprints', 'hafifa_questions', 'hafifa_messages', 'hafifa_issues']
+        && canTrainee(resource.data.traineeId) && canTrainee(request.resource.data.traineeId);
+      allow delete: if col in ['hafifa_sprints', 'hafifa_questions', 'hafifa_messages', 'hafifa_issues']
+        && canTrainee(resource.data.traineeId);
+    }
+  }
+}

@@ -1,0 +1,2255 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>מסלול החפיפה</title>
+<meta name="description" content="ניהול החפיפה: פורטנייטים עם זמן מוקצב, שאלות, ימים מחוץ למאמן, פתקים ודוחות לחופפים.">
+<meta name="theme-color" content="#6D5DE8">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;700&family=Heebo:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --bg: #FAF6F1;
+    --surface: #FFFFFF;
+    --surface-2: #F5F0FA;
+    --line: #ECE3DA;
+    --text: #2D2A3E;
+    --muted: #736D84;
+    --accent: #6D5DE8;
+    --accent-ink: #FFFFFF;
+    --accent-soft: #EEEBFE;
+    --ok: #23865E;
+    --ok-soft: #DEF5EA;
+    --warn: #B5670F;
+    --warn-soft: #FDEEDB;
+    --bad: #C93A62;
+    --bad-soft: #FCE4EB;
+    --info: #2F7EC2;
+    --info-soft: #E1EFFB;
+    --n1: #FFF3B8; --n2: #FFDDE8; --n3: #D8F5E6; --n4: #E6E0FF;
+    --blob1: rgba(109, 93, 232, .10);
+    --blob2: rgba(255, 150, 185, .14);
+    --blob3: rgba(110, 205, 165, .12);
+    --av-l: 88%; --av-t: 32%;
+    --shadow: 0 1px 2px rgba(45, 42, 62, .06), 0 10px 30px rgba(45, 42, 62, .07);
+    --radius: 18px;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17151F; --surface: #211E2C; --surface-2: #2A2638; --line: #37324B;
+      --text: #EEEAF6; --muted: #A9A2BC;
+      --accent: #A597FF; --accent-ink: #1A1530; --accent-soft: #322B57;
+      --ok: #6BD6A6; --ok-soft: #173A2C; --warn: #F0B060; --warn-soft: #3E2C14;
+      --bad: #FF8BA8; --bad-soft: #45202C; --info: #7DBDF2; --info-soft: #1C3247;
+      --n1: #4A4220; --n2: #4A2433; --n3: #1F4133; --n4: #332C5C;
+      --blob1: rgba(165, 151, 255, .10); --blob2: rgba(255, 139, 168, .08); --blob3: rgba(107, 214, 166, .07);
+      --av-l: 30%; --av-t: 86%;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 30px rgba(0, 0, 0, .3);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17151F; --surface: #211E2C; --surface-2: #2A2638; --line: #37324B;
+    --text: #EEEAF6; --muted: #A9A2BC;
+    --accent: #A597FF; --accent-ink: #1A1530; --accent-soft: #322B57;
+    --ok: #6BD6A6; --ok-soft: #173A2C; --warn: #F0B060; --warn-soft: #3E2C14;
+    --bad: #FF8BA8; --bad-soft: #45202C; --info: #7DBDF2; --info-soft: #1C3247;
+    --n1: #4A4220; --n2: #4A2433; --n3: #1F4133; --n4: #332C5C;
+    --blob1: rgba(165, 151, 255, .10); --blob2: rgba(255, 139, 168, .08); --blob3: rgba(107, 214, 166, .07);
+    --av-l: 30%; --av-t: 86%;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 30px rgba(0, 0, 0, .3);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; min-height: 100vh;
+    font-family: 'Heebo', system-ui, sans-serif; font-size: 16px; line-height: 1.5;
+    color: var(--text); background-color: var(--bg);
+    background-image:
+      radial-gradient(40rem 30rem at 100% -5%, var(--blob1), transparent 70%),
+      radial-gradient(34rem 26rem at -5% 30%, var(--blob2), transparent 70%),
+      radial-gradient(38rem 28rem at 60% 110%, var(--blob3), transparent 70%);
+    background-attachment: fixed;
+  }
+  h1, h2, h3 { font-family: 'Rubik', 'Heebo', sans-serif; font-weight: 600; margin: 0; line-height: 1.25; text-wrap: balance; }
+  h1 { font-size: 1.6rem; }
+  h2 { font-size: 1.15rem; }
+  h3 { font-size: 1.05rem; }
+  p { margin: 0; }
+  a { color: var(--accent); }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .muted { color: var(--muted); }
+  .sm { font-size: .875rem; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .grow { flex: 1; }
+  .hidden { display: none !important; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* ---------- Header ---------- */
+  .top { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--surface) 86%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  .top-in { max-width: 1160px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text); font-family: 'Rubik', sans-serif; font-weight: 700; font-size: 1.15rem; }
+  .brand-ico { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: var(--accent-soft); font-size: 1.2rem; }
+  .nav { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav a { white-space: nowrap; text-decoration: none; color: var(--muted); font-weight: 500; padding: 8px 14px; border-radius: 999px; }
+  .nav a:hover { background: var(--surface-2); color: var(--text); }
+  .nav a.on { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+  .me { margin-inline-start: auto; display: flex; align-items: center; gap: 10px; }
+  .me-name { display: flex; flex-direction: column; line-height: 1.2; font-weight: 600; font-size: .95rem; }
+  .me-name small { color: var(--muted); font-weight: 400; font-size: .78rem; }
+  .sync { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--muted); padding: 4px 10px; border-radius: 999px; background: var(--surface-2); white-space: nowrap; }
+  .sync::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+  .sync.online::before { background: var(--ok); }
+  .sync.offline::before, .sync.local::before { background: var(--warn); }
+  .sync.error::before { background: var(--bad); }
+  @media (max-width: 760px) {
+    .top-in { gap: 8px 12px; }
+    .nav { order: 3; width: 100%; }
+    .me-name, .sync span { display: none; }
+    .sync { padding: 6px; }
+  }
+
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 24px 16px 64px; }
+
+  /* ---------- Generic pieces ---------- */
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; }
+  .card + .card { margin-top: 16px; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+  .eyebrow { font-size: .78rem; color: var(--muted); font-weight: 500; }
+  .hint { color: var(--muted); font-size: .875rem; margin-bottom: 12px; }
+  .sec-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 28px 0 12px; }
+  .page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  .page-head p { color: var(--muted); margin-top: 4px; }
+  .link { color: var(--accent); font-weight: 500; font-size: .9rem; text-decoration: none; }
+  .link:hover { text-decoration: underline; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid transparent; border-radius: 12px; padding: 9px 16px; font-weight: 600; cursor: pointer; text-decoration: none; background: var(--surface-2); color: var(--text); transition: transform .08s, filter .15s; white-space: nowrap; }
+  .btn:hover { filter: brightness(.97); }
+  .btn:active { transform: scale(.97); }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); }
+  .btn.soft { background: var(--accent-soft); color: var(--accent); }
+  .btn.ghost { background: transparent; border-color: var(--line); }
+  .btn.danger { background: var(--bad); color: #fff; }
+  .btn.sm { padding: 6px 12px; font-size: .875rem; border-radius: 10px; }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .icon-btn { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; border: 0; background: transparent; cursor: pointer; color: var(--muted); font-size: .95rem; }
+  .icon-btn:hover { background: var(--surface-2); color: var(--text); }
+  .icon-btn:disabled { opacity: .3; cursor: default; background: transparent; }
+
+  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px; font-size: .8rem; font-weight: 600; white-space: nowrap; background: var(--surface-2); color: var(--muted); }
+  .badge.ok { background: var(--ok-soft); color: var(--ok); }
+  .badge.warn { background: var(--warn-soft); color: var(--warn); }
+  .badge.bad { background: var(--bad-soft); color: var(--bad); }
+  .badge.info { background: var(--info-soft); color: var(--info); }
+  .badge.acc { background: var(--accent-soft); color: var(--accent); }
+
+  .bar { height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #ff9ec0)); transition: width .4s; }
+  .bar.big { height: 12px; }
+
+  .av { display: inline-grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 50%; font-family: 'Rubik', sans-serif; font-weight: 700; background: hsl(var(--h) 70% var(--av-l)); color: hsl(var(--h) 50% var(--av-t)); }
+  .av.sm { width: 32px; height: 32px; font-size: .85rem; }
+  .av.lg { width: 56px; height: 56px; font-size: 1.3rem; }
+
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .field > span { font-weight: 500; font-size: .9rem; }
+  .field small { color: var(--muted); font-size: .8rem; }
+  input[type=text], input[type=password], input[type=number], input[type=date], select, textarea {
+    width: 100%; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; padding: 10px 12px; min-height: 44px;
+  }
+  textarea { resize: vertical; min-height: 70px; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .check, .field.check { display: flex; flex-direction: row; gap: 8px; align-items: center; cursor: pointer; }
+  .check input { width: 18px; height: 18px; accent-color: var(--accent); }
+  .seg { display: inline-flex; background: var(--surface-2); border-radius: 12px; padding: 4px; gap: 4px; }
+  .seg label { cursor: pointer; }
+  .seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .seg span { display: block; padding: 7px 14px; border-radius: 9px; font-weight: 500; color: var(--muted); }
+  .seg input:checked + span { background: var(--surface); color: var(--accent); font-weight: 700; box-shadow: var(--shadow); }
+  .seg input:focus-visible + span { outline: 3px solid var(--accent); }
+
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip { border: 1px solid var(--line); background: var(--surface); color: var(--muted); border-radius: 999px; padding: 5px 12px; font-size: .85rem; font-weight: 500; cursor: pointer; white-space: nowrap; }
+  .chip:hover { color: var(--text); }
+  .chip.on { background: var(--accent-soft); border-color: transparent; color: var(--accent); font-weight: 700; }
+  .chip.on.doing { background: var(--info-soft); color: var(--info); }
+
+  .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
+  .empty .big { font-size: 2.6rem; display: block; margin-bottom: 8px; }
+  .empty b { display: block; color: var(--text); font-size: 1.05rem; margin-bottom: 4px; }
+
+  /* ---------- Auth screens ---------- */
+  .center { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; }
+  .auth { width: 100%; max-width: 540px; padding: 28px; }
+  .auth-hero { text-align: center; margin-bottom: 22px; }
+  .auth-hero .hero-ico { font-size: 3rem; display: inline-grid; place-items: center; width: 84px; height: 84px; border-radius: 26px; background: var(--accent-soft); margin-bottom: 12px; }
+  .auth-hero p { color: var(--muted); margin-top: 6px; }
+  .who-group + .who-group { margin-top: 18px; }
+  .who-group h2 { font-size: .9rem; color: var(--muted); margin-bottom: 8px; font-weight: 500; }
+  .who { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+  .who button { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; text-align: start; font-weight: 500; }
+  .who button:hover { border-color: var(--accent); background: var(--accent-soft); }
+  .who button span.nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .picked { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .err { color: var(--bad); font-weight: 500; font-size: .9rem; min-height: 1.4em; margin-bottom: 8px; }
+  .note-box { background: var(--warn-soft); color: var(--warn); border-radius: 12px; padding: 10px 14px; font-size: .85rem; margin-top: 16px; }
+
+  /* ---------- Trainee page ---------- */
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start; }
+  @media (max-width: 960px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+  .hello { margin-bottom: 16px; }
+  .hello p { color: var(--muted); margin-top: 4px; }
+  .overview .ov-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+  .ov-num { font-family: 'Rubik', sans-serif; font-size: 2rem; font-weight: 700; line-height: 1.1; }
+  .ov-num span { font-size: 1rem; font-weight: 500; color: var(--muted); }
+  .ov-meta { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-top: 12px; font-size: .9rem; color: var(--muted); }
+  .ov-meta b { color: var(--text); font-weight: 600; }
+
+  .t-head { margin-bottom: 20px; }
+  .back { display: inline-block; text-decoration: none; color: var(--muted); font-size: .9rem; margin-bottom: 10px; }
+  .back:hover { color: var(--accent); }
+  .t-id { display: flex; align-items: center; gap: 14px; }
+  .t-id .muted { font-size: .9rem; margin-top: 2px; }
+  .tabs { display: flex; gap: 4px; margin-top: 16px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+  .tabs a { padding: 10px 16px; text-decoration: none; color: var(--muted); font-weight: 500; border-bottom: 3px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+  .tabs a.on { color: var(--accent); border-color: var(--accent); font-weight: 700; }
+
+  .sprints { display: flex; flex-direction: column; gap: 14px; }
+  .sprint { --c: var(--line); background: var(--surface); border: 1px solid var(--line); border-inline-start: 6px solid var(--c); border-radius: var(--radius); box-shadow: var(--shadow); padding: 16px 18px; }
+  .sprint.st-active { --c: var(--accent); }
+  .sprint.st-overdue { --c: var(--bad); }
+  .sprint.st-done { --c: var(--ok); }
+  .sp-head { display: flex; gap: 12px; align-items: flex-start; }
+  .sp-num { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; background: var(--surface-2); font-family: 'Rubik', sans-serif; font-weight: 700; color: var(--muted); }
+  .st-active .sp-num { background: var(--accent-soft); color: var(--accent); }
+  .st-overdue .sp-num { background: var(--bad-soft); color: var(--bad); }
+  .st-done .sp-num { background: var(--ok-soft); color: var(--ok); }
+  .sp-title { flex: 1; min-width: 0; }
+  .sp-title p { color: var(--muted); font-size: .9rem; margin-top: 2px; white-space: pre-line; }
+  .sp-body { margin-top: 14px; }
+  .sp-todo { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .sp-alloc b { font-family: 'Rubik', sans-serif; font-size: 1.25rem; }
+  .sp-alloc span { color: var(--muted); font-size: .9rem; margin-inline-start: 6px; }
+  .sp-active { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+  .sp-facts { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 4px; }
+  .big-line { font-family: 'Rubik', sans-serif; font-size: 1.2rem; font-weight: 600; }
+  .st-overdue .big-line { color: var(--bad); }
+  .facts { color: var(--muted); font-size: .875rem; }
+  .sp-facts .row { margin-top: 8px; }
+  .ring { position: relative; width: 108px; height: 108px; flex: none; }
+  .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring circle { fill: none; stroke-width: 9; }
+  .ring .trk { stroke: var(--surface-2); }
+  .ring .val { stroke: var(--accent); stroke-linecap: round; transition: stroke-dashoffset .5s; }
+  .ring.warn .val { stroke: var(--warn); }
+  .ring.bad .val { stroke: var(--bad); }
+  .ring-in { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.1; }
+  .ring-in b { font-family: 'Rubik', sans-serif; font-size: 1.7rem; }
+  .ring-in span { font-size: .72rem; color: var(--muted); }
+  .ring.bad .ring-in b { color: var(--bad); }
+  .sp-done { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .sp-done > div { flex: 1; min-width: 180px; }
+  .sp-done .big-line { font-size: 1.05rem; }
+  .done-check { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--ok-soft); color: var(--ok); font-weight: 700; font-size: 1.2rem; }
+  .sp-foot { display: flex; align-items: center; gap: 8px 14px; flex-wrap: wrap; margin-top: 14px; padding-top: 10px; border-top: 1px dashed var(--line); }
+  .sp-foot:empty { display: none; }
+  .tools { margin-inline-start: auto; display: flex; gap: 2px; }
+  .exts summary { cursor: pointer; font-size: .875rem; color: var(--warn); font-weight: 500; }
+  .exts ul { margin: 6px 0 0; padding-inline-start: 18px; font-size: .875rem; }
+  .exts li + li { margin-top: 4px; }
+  .exts-box { flex-basis: 100%; }
+
+  /* Upcoming week */
+  .days { display: flex; flex-direction: column; gap: 6px; }
+  .day { display: flex; align-items: center; gap: 10px; width: 100%; text-align: start; border: 1px solid transparent; border-radius: 12px; padding: 8px 12px; cursor: pointer; background: var(--ok-soft); color: var(--text); }
+  .day:hover:not(:disabled) { border-color: var(--ok); }
+  .day .d-name { font-weight: 700; min-width: 44px; }
+  .day .d-num { color: var(--muted); font-size: .85rem; min-width: 38px; }
+  .day .d-st { flex: 1; font-size: .85rem; color: var(--ok); font-weight: 500; }
+  .day .d-val { font-family: 'Rubik', sans-serif; font-weight: 600; font-size: .85rem; color: var(--ok); background: var(--surface); border-radius: 8px; padding: 0 8px; }
+  .day.away { background: var(--bad-soft); }
+  .day.away:hover:not(:disabled) { border-color: var(--bad); }
+  .day.away .d-st { color: var(--bad); }
+  .day.holiday { background: var(--info-soft); cursor: default; }
+  .day.holiday .d-st { color: var(--info); }
+  .day.weekend { background: transparent; border: 1px dashed var(--line); cursor: default; }
+  .day.weekend .d-st { color: var(--muted); }
+  .day:disabled { cursor: default; }
+  .day.today { box-shadow: inset 0 0 0 2px var(--accent); }
+  .legend { display: flex; gap: 6px 14px; flex-wrap: wrap; font-size: .78rem; color: var(--muted); margin-top: 10px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-inline-end: 4px; vertical-align: -1px; }
+
+  /* Notes */
+  .note-form textarea { min-height: 64px; border-radius: 14px; }
+  .note-tools { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .swatch input { position: absolute; opacity: 0; }
+  .swatch span { display: block; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--surface); box-shadow: 0 0 0 1px var(--line); cursor: pointer; }
+  .swatch input:checked + span { box-shadow: 0 0 0 2px var(--accent); }
+  .swatch input:focus-visible + span { outline: 3px solid var(--accent); }
+  .emo { border: 0; background: transparent; font-size: 1.1rem; cursor: pointer; padding: 2px; border-radius: 8px; }
+  .emo:hover { background: var(--surface-2); }
+  .notes { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; max-height: 460px; overflow-y: auto; padding: 4px; }
+  .note { position: relative; padding: 12px 14px 10px; border-radius: 4px 16px 16px 16px; background: var(--n1); transform: rotate(-.6deg); box-shadow: 0 2px 6px rgba(0,0,0,.06); }
+  .note:nth-child(even) { transform: rotate(.6deg); border-radius: 16px 4px 16px 16px; }
+  .note.c2 { background: var(--n2); } .note.c3 { background: var(--n3); } .note.c4 { background: var(--n4); }
+  .note p { white-space: pre-wrap; overflow-wrap: anywhere; }
+  .note .by { font-size: .78rem; color: var(--muted); margin-top: 6px; display: flex; gap: 6px; align-items: center; }
+  .note .x { position: absolute; top: 4px; left: 4px; width: 26px; height: 26px; font-size: .8rem; opacity: .5; }
+  .note .x:hover { opacity: 1; }
+  .note.new::after { content: 'חדש!'; position: absolute; top: -8px; right: 12px; background: var(--accent); color: var(--accent-ink); font-size: .7rem; font-weight: 700; padding: 1px 8px; border-radius: 999px; }
+  .sw1 { background: var(--n1); } .sw2 { background: var(--n2); } .sw3 { background: var(--n3); } .sw4 { background: var(--n4); }
+
+  /* Questions */
+  .q-top { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; justify-content: space-between; }
+  .q-group { margin-top: 18px; }
+  .q-group-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; }
+  .q-group-head .bar { flex: 1; min-width: 80px; max-width: 200px; }
+  .qs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .q { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; border-radius: 14px; background: var(--surface-2); border: 1px solid transparent; }
+  .q.q-doing { background: var(--info-soft); }
+  .q.q-done .q-text { text-decoration: line-through; color: var(--muted); }
+  .q-check { flex: none; width: 26px; height: 26px; margin-top: 1px; border-radius: 8px; border: 2px solid var(--muted); background: var(--surface); cursor: pointer; display: grid; place-items: center; font-weight: 700; color: #fff; }
+  .q-check:hover:not(:disabled) { border-color: var(--ok); }
+  .q-done .q-check { background: var(--ok); border-color: var(--ok); }
+  .q-check:disabled { cursor: default; }
+  .q-main { flex: 1; min-width: 0; }
+  .q-text { overflow-wrap: anywhere; }
+  .q-note { font-size: .85rem; color: var(--muted); margin-top: 2px; white-space: pre-wrap; }
+  .q-meta { font-size: .78rem; color: var(--muted); }
+  .q-actions { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+  .q-add { display: flex; gap: 8px; margin-top: 8px; }
+  .q-add input { flex: 1; min-height: 40px; }
+  @media (max-width: 640px) { .q { flex-wrap: wrap; } .q-actions { width: 100%; justify-content: flex-start; padding-inline-start: 38px; } }
+
+  /* Calendar */
+  .cal-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .cal-head h2 { flex: 1; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+  .cal-dow { text-align: center; font-size: .8rem; color: var(--muted); font-weight: 600; padding-bottom: 2px; }
+  .cell { position: relative; min-height: 88px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); padding: 6px; text-align: start; display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
+  button.cell { cursor: pointer; }
+  button.cell:hover { border-color: var(--accent); }
+  .cell.blank { border: 0; background: transparent; }
+  .cell.weekend { background: transparent; border-style: dashed; }
+  .cell.away { background: var(--bad-soft); border-color: transparent; }
+  .cell.holiday { background: var(--info-soft); border-color: transparent; }
+  .cell.today { box-shadow: inset 0 0 0 2px var(--accent); }
+  .cell .c-top { display: flex; justify-content: space-between; align-items: center; }
+  .cell .c-n { font-weight: 700; font-size: .9rem; }
+  .cell.weekend .c-n { color: var(--muted); font-weight: 500; }
+  .cell .c-v { font-size: .7rem; color: var(--muted); }
+  .cell .c-lbl { font-size: .72rem; font-weight: 600; color: var(--bad); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cell.holiday .c-lbl { color: var(--info); }
+  .ev { font-size: .7rem; border-radius: 6px; padding: 1px 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; background: var(--accent-soft); color: var(--accent); }
+  .ev.due { background: var(--warn-soft); color: var(--warn); }
+  .ev.late { background: var(--bad-soft); color: var(--bad); }
+  .ev.done { background: var(--ok-soft); color: var(--ok); }
+  @media (max-width: 640px) {
+    .cal-grid { gap: 3px; }
+    .cell { min-height: 54px; padding: 4px; border-radius: 8px; }
+    .cell .c-lbl, .cell .c-v { display: none; }
+    .ev { font-size: 0; padding: 0; height: 5px; }
+  }
+  .marked { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .marked li { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: var(--surface-2); border-radius: 10px; font-size: .9rem; }
+  .marked li span.grow { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* Home cards */
+  .tgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+  .tcard { display: flex; flex-direction: column; gap: 14px; text-decoration: none; color: var(--text); transition: transform .12s, border-color .12s; }
+  .tcard:hover { transform: translateY(-2px); border-color: var(--accent); }
+  .tcard + .tcard { margin-top: 0; }
+  .tc-head { display: flex; align-items: center; gap: 12px; }
+  .tc-head > div { flex: 1; min-width: 0; }
+  .tc-stage { display: flex; flex-direction: column; gap: 2px; }
+  .tc-stage b { font-weight: 600; }
+  .tc-stage .t { font-size: .875rem; color: var(--muted); }
+  .tc-stage .t.bad { color: var(--bad); font-weight: 600; }
+  .tc-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: .85rem; color: var(--muted); flex-wrap: wrap; }
+  .unread { background: var(--accent); color: var(--accent-ink); font-size: .78rem; font-weight: 700; padding: 2px 10px; border-radius: 999px; }
+
+  /* Reports */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 18px; }
+  .tile { padding: 16px 18px; }
+  .tile + .tile { margin-top: 0; }
+  .tile .v { font-family: 'Rubik', sans-serif; font-size: 2rem; font-weight: 700; line-height: 1.1; margin-top: 4px; }
+  .tile.bad .v { color: var(--bad); }
+  .tile.warn .v { color: var(--warn); }
+  .tile.ok .v { color: var(--ok); }
+  .alerts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .alerts li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); font-size: .92rem; }
+  .alerts li.bad { background: var(--bad-soft); }
+  .alerts li.warn { background: var(--warn-soft); }
+  .alerts li .ai { flex: none; }
+  .tbl-wrap { overflow-x: auto; margin: 0 -18px; padding: 0 18px; }
+  table.tbl { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  .tbl th { text-align: start; font-weight: 600; color: var(--muted); font-size: .8rem; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .tbl td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .tbl tr:last-child td { border-bottom: 0; }
+  .tbl td.nw { white-space: nowrap; }
+  .tbl a.tn { display: inline-flex; align-items: center; gap: 8px; color: var(--text); text-decoration: none; font-weight: 600; white-space: nowrap; }
+  .tbl a.tn:hover { color: var(--accent); }
+  .mx td, .mx th { text-align: center; }
+  .mx td:first-child, .mx th:first-child { text-align: start; }
+  .mc { display: inline-block; min-width: 64px; padding: 4px 8px; border-radius: 8px; font-size: .85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .mc.ok { background: var(--ok-soft); color: var(--ok); }
+  .mc.bad { background: var(--bad-soft); color: var(--bad); }
+  .mc.info { background: var(--info-soft); color: var(--info); }
+  .mc.none { color: var(--muted); }
+  .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+  .two .card + .card { margin-top: 0; }
+  @media (max-width: 860px) { .two { grid-template-columns: minmax(0, 1fr); } }
+
+  /* Users / plan */
+  .nu-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0 16px; align-items: end; }
+  .nu-form .full { grid-column: 1 / -1; }
+  .nu-form:has(#nu-role-m:checked) .trainee-only { display: none; }
+  .plan-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .plan-item { display: flex; gap: 12px; align-items: flex-start; padding: 14px; border-radius: 14px; background: var(--surface-2); }
+  .plan-item .grow { min-width: 0; }
+  .plan-item p { color: var(--muted); font-size: .9rem; white-space: pre-line; }
+  .plan-item details { margin-top: 6px; font-size: .9rem; }
+  .plan-item summary { cursor: pointer; color: var(--accent); font-weight: 500; }
+  .plan-item ol { margin: 6px 0 0; padding-inline-start: 20px; }
+
+  /* Trainee "now" card and journey */
+  .now { padding: 22px; }
+  .now-title { font-size: 1.45rem; margin: 4px 0 2px; }
+  .now-body { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; margin-top: 16px; }
+  .now-body .bar { max-width: 360px; margin: 6px 0 2px; }
+  .journey { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .journey li { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+  .j-dot { flex: none; width: 24px; height: 24px; margin-top: 1px; border-radius: 50%; border: 2px dashed var(--line); display: grid; place-items: center; font-size: .8rem; font-weight: 700; }
+  .journey.done li { background: transparent; }
+  .journey.done .j-dot { border: 0; background: var(--ok-soft); color: var(--ok); }
+  .talk-card h2 { margin-bottom: 6px; }
+  .talk-card { background: var(--accent-soft); border-color: transparent; }
+  .banner { display: flex; flex-direction: column; gap: 4px; background: var(--warn-soft); color: var(--text); border-radius: 14px; padding: 12px 16px; margin-bottom: 18px; }
+
+  /* Mentor focus card */
+  .mgr-focus h2 { font-size: 1.3rem; margin-top: 2px; }
+  .mgr-focus.is-late { border-color: var(--bad); box-shadow: 0 0 0 2px var(--bad-soft), var(--shadow); }
+  .mf-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; }
+  .mf-grid > div { background: var(--surface-2); border-radius: 12px; padding: 10px 12px; }
+  .mf-grid b { font-family: 'Rubik', sans-serif; font-size: 1.1rem; font-weight: 600; }
+  .bad-t { color: var(--bad); }
+  .grp-title { margin: 22px 0 10px; }
+  .unread.warn-b { background: var(--warn); color: #fff; }
+  .day.half { background: var(--warn-soft); }
+  .day.half .d-st { color: var(--warn); }
+  .day.half .d-val { color: var(--warn); }
+  .cell.half { background: var(--warn-soft); border-color: transparent; }
+  .cell.half .c-lbl { color: var(--warn); }
+
+  .sp-sec { font-size: .95rem; color: var(--muted); margin: 8px 0 -4px; }
+
+  /* Issues */
+  .code-pill { display: inline-block; margin-inline-start: 6px; padding: 2px 10px; border-radius: 8px; background: var(--accent-soft); color: var(--accent); font-size: .85rem; }
+  .code-pill b { letter-spacing: .12em; }
+  .rep-sec + .rep-sec { margin-top: 16px; }
+  .rep-q { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .rep-q > li { padding: 10px 12px; border-radius: 12px; background: var(--surface-2); }
+  .rep-row { display: flex; align-items: center; gap: 10px; }
+  .rep-row span.grow { overflow-wrap: anywhere; }
+  .rep-q .issue { margin-top: 8px; }
+  .issues { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .issue { padding: 12px 14px; border-radius: 14px; background: var(--warn-soft); }
+  .issue.res { background: var(--surface-2); }
+  .issue p { margin: 6px 0 4px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .is-head { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+  .is-about { font-size: .85rem; font-weight: 600; color: var(--muted); }
+  .is-reply { margin-top: 8px; padding: 8px 12px; border-radius: 10px; background: var(--surface); font-size: .9rem; }
+
+  /* Attendance */
+  .att-tbl th, .att-tbl td { text-align: center; }
+  .att-tbl th:first-child, .att-tbl td:first-child { text-align: start; }
+  .att-tbl th.is-today { color: var(--accent); }
+  .att { font-weight: 700; white-space: nowrap; }
+  .att.in { color: var(--ok); }
+  .att.away { color: var(--bad); background: var(--bad-soft); }
+  .att.half { color: var(--warn); background: var(--warn-soft); }
+  .att.hol { color: var(--info); background: var(--info-soft); }
+  .att-n { display: block; font-weight: 400; font-size: .75rem; }
+
+  /* Dialog */
+  dialog { border: 0; border-radius: 22px; padding: 0; width: min(480px, calc(100vw - 32px)); background: var(--surface); color: var(--text); box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+  dialog::backdrop { background: rgba(30, 24, 50, .45); backdrop-filter: blur(3px); }
+  .dlg-form { padding: 22px; }
+  .dlg-form h2 { font-size: 1.25rem; margin-bottom: 16px; }
+  .dlg-actions { display: flex; gap: 8px; justify-content: flex-start; margin-top: 8px; }
+  .dlg-prev { background: var(--accent-soft); color: var(--accent); border-radius: 12px; padding: 10px 14px; font-size: .9rem; font-weight: 500; margin-bottom: 14px; }
+  .dlg-prev:empty { display: none; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 20px); background: var(--text); color: var(--bg); padding: 12px 20px; border-radius: 14px; font-weight: 500; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 50; max-width: calc(100vw - 32px); text-align: center; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+  #fx span { position: fixed; top: -40px; font-size: 26px; pointer-events: none; z-index: 60; animation: fall 2.1s cubic-bezier(.3,.6,.6,1) forwards; }
+  @keyframes fall { to { transform: translate(var(--x), 110vh) rotate(var(--r)); } }
+  .loader { font-size: 2.4rem; animation: bob 1.2s ease-in-out infinite; }
+  @keyframes bob { 50% { transform: translateY(-8px); } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<dialog id="dlg" aria-labelledby="dlgTitle"></dialog>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div id="fx" aria-hidden="true"></div>
+<script src="firebase-config.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ================= Storage ================= */
+  const FIREBASE_VERSION = '10.14.1';
+  const cfg = window.FIREBASE_CONFIG;
+  /* ?demo=admin|mentor|trainee opens sample data that lives only in memory: nothing is saved or synced. */
+  const DEMO = ['admin', 'mentor', 'trainee'].indexOf(new URLSearchParams(location.search).get('demo')) >= 0 ? new URLSearchParams(location.search).get('demo') : null;
+  const useCloud = !DEMO && !!(cfg && typeof cfg === 'object' && cfg.projectId && cfg.apiKey);
+  const memStore = {};
+  const COLS = ['users', 'sprints', 'questions', 'messages', 'absences', 'settings', 'issues', 'talks'];
+  const LS_DB = 'hafifa_db_v1', LS_SESSION = 'hafifa_session', LS_SEEN = 'hafifa_seen';
+
+  const app = document.getElementById('app');
+  const $ = id => document.getElementById(id);
+
+  function emptyDb() { const d = {}; COLS.forEach(c => { d[c] = {}; }); return d; }
+  let db = emptyDb();
+  let ready = !useCloud;
+  let loadError = null;
+  let cloud = null;
+  let syncState = useCloud ? 'connecting' : 'local';
+
+  function lsGet(k, fb) { if (DEMO) return k in memStore ? JSON.parse(memStore[k]) : fb; try { const v = localStorage.getItem(k); return v == null ? fb : JSON.parse(v); } catch (e) { return fb; } }
+  function lsSet(k, v) { if (DEMO) { memStore[k] = JSON.stringify(v); return; } try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function lsDel(k) { if (DEMO) { delete memStore[k]; return; } try { localStorage.removeItem(k); } catch (e) {} }
+  function loadLocal() { const d = lsGet(LS_DB, null); db = emptyDb(); if (d) COLS.forEach(c => { if (d[c]) db[c] = d[c]; }); }
+
+  function cloudFail(err) { syncState = 'error'; toast('השינוי נשמר במכשיר וישלח כשהחיבור יחזור'); console.warn(err); scheduleRender(); }
+  function put(col, obj) {
+    db[col][obj.id] = obj;
+    if (!useCloud && !DEMO) lsSet(LS_DB, db);
+    if (cloud) cloud.set(col, obj).catch(cloudFail);
+    scheduleRender();
+  }
+  function del(col, id) {
+    delete db[col][id];
+    if (!useCloud && !DEMO) lsSet(LS_DB, db);
+    if (cloud) cloud.remove(col, id).catch(cloudFail);
+    scheduleRender();
+  }
+
+  /* ---------- Firebase: real sign-in (Authentication) + shared data (Firestore) ----------
+     Each person signs in with a hidden e-mail built from their user id and a "generation" number,
+     e.g. "k3x9ab.0@example.com" (example.com is reserved, so nothing is ever sent anywhere).
+     Resetting a password bumps the generation, so the person makes a fresh account with a new one-time code.
+     Public (readable before sign-in): hafifa_names (names for the login list), hafifa_claims (who has signed up), hafifa_setup/owner.
+     Everything else needs a signed-in, claimed account; see the rules in README. */
+  let fb = null, authUser = null, authReady = false, dataStarted = false, claiming = false, unsubs = [];
+  const pub = { names: {}, claims: {}, invites: {}, owner: undefined, namesLoaded: false, claimsLoaded: false };
+  const LOGIN_DOMAIN = 'example.com';
+  /* Firebase requires at least 6 characters. */
+  const PW_MIN = useCloud ? 6 : 4;
+  const emailFor = (id, gen) => id + '.' + (gen || 0) + '@' + LOGIN_DOMAIN;
+  const idFromEmail = e => String(e || '').split('@')[0].split('.')[0];
+  const newCode = () => { const a = new Uint32Array(1); crypto.getRandomValues(a); return String(100000 + (a[0] % 900000)); };
+
+  function dataErr(err) {
+    console.error(err);
+    syncState = 'error';
+    if (!ready) loadError = err && err.code === 'permission-denied' ? 'rules' : 'other';
+    scheduleRender();
+  }
+  async function initCloud() {
+    try {
+      const base = 'https://www.gstatic.com/firebasejs/' + FIREBASE_VERSION + '/';
+      const appMod = await import(base + 'firebase-app.js');
+      const fs = await import(base + 'firebase-firestore.js');
+      const am = await import(base + 'firebase-auth.js');
+      const fapp = appMod.initializeApp(cfg);
+      /* Memory cache only: after signing out, nothing of the onboarding stays on a shared computer. */
+      const fdb = fs.getFirestore(fapp);
+      const au = am.getAuth(fapp);
+      const colRef = c => fs.collection(fdb, 'hafifa_' + c);
+      fb = { fs, am, fdb, au, colRef };
+      cloud = {
+        set: (c, o) => fs.setDoc(fs.doc(colRef(c), o.id), JSON.parse(JSON.stringify(o))),
+        remove: (c, id) => fs.deleteDoc(fs.doc(colRef(c), id))
+      };
+      const intoMap = snap => { const m = {}; snap.docs.forEach(d => { m[d.id] = Object.assign({}, d.data(), { id: d.id }); }); return m; };
+      fs.onSnapshot(colRef('names'), { includeMetadataChanges: true }, snap => {
+        pub.names = intoMap(snap); if (!snap.metadata.fromCache) pub.namesLoaded = true; scheduleRender();
+      }, dataErr);
+      fs.onSnapshot(colRef('claims'), { includeMetadataChanges: true }, snap => {
+        pub.claims = intoMap(snap); if (!snap.metadata.fromCache) pub.claimsLoaded = true; checkClaim(); scheduleRender();
+      }, dataErr);
+      fs.onSnapshot(fs.doc(colRef('setup'), 'owner'), { includeMetadataChanges: true }, snap => {
+        if (snap.metadata.fromCache && !snap.exists()) return;
+        pub.owner = snap.exists() ? snap.data() : null; scheduleRender();
+      }, dataErr);
+      am.onAuthStateChanged(au, user => {
+        stopData();
+        authUser = user; authReady = true;
+        if (user) lsSet(LS_SESSION, idFromEmail(user.email)); else lsDel(LS_SESSION);
+        checkClaim(); scheduleRender();
+      });
+    } catch (e) {
+      console.error(e); loadError = 'other'; scheduleRender();
+    }
+  }
+  function stopData() { unsubs.forEach(u => u()); unsubs = []; dataStarted = false; ready = false; db = emptyDb(); pub.invites = {}; }
+  /* Start reading data once this browser's account is the one that claimed the name; an outdated account (after a reset) is signed out. */
+  function checkClaim() {
+    if (!fb || !authUser || dataStarted || claiming || !pub.claimsLoaded) return;
+    const id = idFromEmail(authUser.email), c = pub.claims[id];
+    if (c && c.uid === authUser.uid) startData(id);
+    else fb.am.signOut(fb.au);
+  }
+  function startData(id) {
+    const { fs, colRef } = fb;
+    dataStarted = true;
+    const listen = (ref, apply) => unsubs.push(fs.onSnapshot(ref, { includeMetadataChanges: true }, snap => {
+      apply(snap); syncState = snap.metadata.fromCache ? 'offline' : 'online'; scheduleRender();
+    }, dataErr));
+    const intoDb = c => snap => { const m = {}; snap.docs.forEach(d => { const x = d.data(); x.id = d.id; m[x.id] = x; }); db[c] = m; };
+    let rest = false;
+    listen(colRef('users'), snap => {
+      intoDb('users')(snap);
+      if (!snap.metadata.fromCache || snap.size) ready = true;
+      const u = db.users[id];
+      if (!u || rest) return;
+      rest = true;
+      if (u.role === 'trainee') {
+        /* A trainee may only read their own records, so every query is limited to them. */
+        ['sprints', 'questions', 'messages', 'issues', 'talks'].forEach(c => listen(fs.query(colRef(c), fs.where('traineeId', '==', id)), intoDb(c)));
+        [id, '_global'].forEach(k => listen(fs.doc(colRef('absences'), k), snap => {
+          if (snap.exists()) db.absences[k] = Object.assign({}, snap.data(), { id: k }); else delete db.absences[k];
+        }));
+        listen(colRef('settings'), intoDb('settings'));
+      } else {
+        COLS.filter(c => c !== 'users').forEach(c => listen(colRef(c), intoDb(c)));
+        if (u.role === 'admin') listen(colRef('invites'), snap => { pub.invites = {}; snap.docs.forEach(d => { pub.invites[d.id] = d.data(); }); });
+      }
+    });
+  }
+  /* Writes to the sign-in collections (names, claims, invites), which are not part of the app data. */
+  function pubSet(c, id, data) { return fb.fs.setDoc(fb.fs.doc(fb.colRef(c), id), data).catch(cloudFail); }
+  function pubDel(c, id) { return fb.fs.deleteDoc(fb.fs.doc(fb.colRef(c), id)).catch(cloudFail); }
+
+  function authError(e) {
+    const c = (e && e.code) || '';
+    if (c === 'auth/invalid-credential' || c === 'auth/wrong-password' || c === 'auth/invalid-login-credentials') return 'הסיסמה לא נכונה 🙈';
+    if (c === 'auth/weak-password') return 'הסיסמה צריכה להיות לפחות 6 תווים';
+    if (c === 'auth/too-many-requests') return 'יותר מדי ניסיונות. נסו שוב בעוד כמה דקות';
+    if (c === 'auth/network-request-failed') return 'אין חיבור לאינטרנט';
+    if (c === 'auth/operation-not-allowed' || c === 'auth/configuration-not-found') return 'צריך להפעיל ב-Firebase את Authentication ← Email/Password (ראו README)';
+    if (c === 'permission-denied') return 'הקוד לא נכון';
+    console.error(e);
+    return 'משהו השתבש (' + (c || 'שגיאה') + ')';
+  }
+  async function cloudSetup(name, pw) {
+    const { fs, am, fdb, au, colRef } = fb, id = uid(), now = Date.now();
+    claiming = true;
+    try {
+      const cred = await am.createUserWithEmailAndPassword(au, emailFor(id, 0), pw);
+      const b = fs.writeBatch(fdb);
+      b.set(fs.doc(colRef('setup'), 'owner'), { userId: id, at: now });
+      b.set(fs.doc(colRef('claims'), id), { uid: cred.user.uid, code: 'owner', at: now });
+      b.set(fs.doc(colRef('names'), id), { name, gen: 0 });
+      b.set(fs.doc(colRef('users'), id), { id, name, role: 'admin', createdAt: now });
+      try { await b.commit(); } catch (e) { await cred.user.delete().catch(() => {}); throw e; }
+      pub.claims[id] = { id, uid: cred.user.uid };
+    } finally { claiming = false; checkClaim(); }
+  }
+  async function cloudSignIn(id, pw) {
+    const n = pub.names[id];
+    await fb.am.signInWithEmailAndPassword(fb.au, emailFor(id, n && n.gen), pw);
+  }
+  /* First sign-in: make the account, then claim the name with the admin's one-time code. A wrong code removes the new account again. */
+  async function cloudClaim(id, code, pw) {
+    const { fs, am, au, colRef } = fb, n = pub.names[id], email = emailFor(id, n && n.gen);
+    claiming = true;
+    try {
+      let cred, created = false;
+      try { cred = await am.createUserWithEmailAndPassword(au, email, pw); created = true; }
+      catch (e) { if (e.code !== 'auth/email-already-in-use') throw e; cred = await am.signInWithEmailAndPassword(au, email, pw); }
+      try { await fs.setDoc(fs.doc(colRef('claims'), id), { uid: cred.user.uid, code, at: Date.now() }); }
+      catch (e) { if (created) await cred.user.delete().catch(() => {}); else await am.signOut(au); throw e; }
+      pub.claims[id] = { id, uid: cred.user.uid };
+    } finally { claiming = false; checkClaim(); }
+  }
+
+  /* ================= Helpers ================= */
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+  const byName = (a, b) => a.name.localeCompare(b.name, 'he');
+  const half = x => Math.round(x * 2) / 2;
+  let toastTimer;
+  function toast(msg) { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2600); }
+
+  /* SHA-256 in plain JS so hashing also works on plain http (where crypto.subtle is missing). */
+  const PRIMES = []; for (let n = 2; PRIMES.length < 64; n++) if (PRIMES.every(p => n % p)) PRIMES.push(n);
+  const K256 = PRIMES.map(p => (Math.cbrt(p) % 1) * 4294967296 | 0);
+  const H256 = PRIMES.slice(0, 8).map(p => (Math.sqrt(p) % 1) * 4294967296 | 0);
+  const ror = (x, n) => (x >>> n) | (x << (32 - n));
+  function sha256(str) {
+    const bytes = new TextEncoder().encode(str), l = bytes.length;
+    const buf = new Uint8Array(((l + 9 + 63) >> 6) << 6);
+    buf.set(bytes); buf[l] = 0x80;
+    const dv = new DataView(buf.buffer);
+    dv.setUint32(buf.length - 4, (l * 8) >>> 0); dv.setUint32(buf.length - 8, Math.floor(l / 536870912));
+    let h = H256.slice(); const w = new Int32Array(64);
+    for (let off = 0; off < buf.length; off += 64) {
+      for (let i = 0; i < 16; i++) w[i] = dv.getInt32(off + i * 4);
+      for (let i = 16; i < 64; i++) {
+        const a = w[i - 15], b = w[i - 2];
+        w[i] = (w[i - 16] + (ror(a, 7) ^ ror(a, 18) ^ (a >>> 3)) + w[i - 7] + (ror(b, 17) ^ ror(b, 19) ^ (b >>> 10))) | 0;
+      }
+      let [a, b, c, d, e, f, g, k] = h;
+      for (let i = 0; i < 64; i++) {
+        const t1 = (k + (ror(e, 6) ^ ror(e, 11) ^ ror(e, 25)) + ((e & f) ^ (~e & g)) + K256[i] + w[i]) | 0;
+        const t2 = ((ror(a, 2) ^ ror(a, 13) ^ ror(a, 22)) + ((a & b) ^ (a & c) ^ (b & c))) | 0;
+        k = g; g = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0;
+      }
+      h = [a, b, c, d, e, f, g, k].map((x, i) => (x + h[i]) | 0);
+    }
+    return h.map(x => (x >>> 0).toString(16).padStart(8, '0')).join('');
+  }
+  function hashPw(pw, salt) { let h = salt + '|' + pw; for (let i = 0; i < 1500; i++) h = sha256(h + salt); return h; }
+
+  /* ---------- Dates & work days ---------- */
+  const pad = n => String(n).padStart(2, '0');
+  const iso = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  const parse = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+  const addDays = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return iso(d); };
+  const todayISO = () => iso(new Date());
+  const DAY_SHORT = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'];
+  const MONTHS = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
+  const dm = d => { const x = parse(d); return x.getDate() + '.' + (x.getMonth() + 1); };
+  const fmtDate = d => d ? 'יום ' + DAY_SHORT[parse(d).getDay()] + '׳ ' + dm(d) : '—';
+  const fmtShort = ts => { const d = new Date(ts); return d.getDate() + '.' + (d.getMonth() + 1); };
+  function ago(ts) {
+    const s = (Date.now() - ts) / 1000;
+    if (s < 60) return 'עכשיו';
+    if (s < 3600) return 'לפני ' + Math.floor(s / 60) + ' דק׳';
+    if (s < 86400) return 'לפני ' + Math.floor(s / 3600) + ' שע׳';
+    if (s < 172800) return 'אתמול';
+    return fmtShort(ts);
+  }
+  const fmtNum = n => Number.isInteger(n) ? String(n) : n.toFixed(1);
+  function daysText(n) {
+    if (n == null) return '—';
+    if (n === 0) return '0 ימים';
+    if (n === 0.5) return 'חצי יום';
+    if (n === 1) return 'יום אחד';
+    if (n === 2) return 'יומיים';
+    return fmtNum(n) + ' ימים';
+  }
+
+  function absMap(key) { return (db.absences[key] && db.absences[key].days) || {}; }
+  /* An absence is stored as { half, note }; older data stored just the note, meaning a full day. */
+  function absEntry(key, d) {
+    const v = absMap(key)[d];
+    if (v == null) return null;
+    return typeof v === 'object' ? { half: !!v.half, note: v.note || '' } : { half: false, note: v || '' };
+  }
+  const baseValue = d => { const wd = parse(d).getDay(); return wd <= 3 ? 1 : wd === 4 ? 0.5 : 0; };
+  /* Sunday–Wednesday count as a full day, Thursday as half, Friday/Saturday as nothing; holidays and marked absences take off a full or half day. */
+  function dayValue(d, tid) {
+    let v = baseValue(d);
+    if (!v) return 0;
+    const g = absEntry('_global', d);
+    if (g) v = g.half ? Math.max(0, v - 0.5) : 0;
+    const a = tid ? absEntry(tid, d) : null;
+    if (a) v = a.half ? Math.max(0, v - 0.5) : 0;
+    return v;
+  }
+  const absLabel = e => (e.half ? 'חצי יום לא במאמן' : 'לא במאמן') + (e.note ? ' · ' + e.note : '');
+  function unitsBetween(a, b, tid) { let n = 0; for (let d = a, k = 0; d <= b && k < 3000; d = addDays(d, 1), k++) n += dayValue(d, tid); return n; }
+  const extTotal = s => (s.extensions || []).reduce((a, e) => a + (+e.days || 0), 0);
+  const totalDays = s => (+s.days || 0) + extTotal(s);
+  function deadlineOf(s) {
+    const total = totalDays(s); let d = s.startDate, cum = 0;
+    for (let k = 0; k < 1500; k++) { cum += dayValue(d, s.traineeId); if (cum >= total - 1e-9) return d; d = addDays(d, 1); }
+    return null;
+  }
+  function sprintInfo(s) {
+    const total = totalDays(s), today = todayISO(), tid = s.traineeId;
+    const r = { total, used: null };
+    if (s.status === 'todo' || !s.startDate) return r;
+    r.deadline = deadlineOf(s);
+    if (s.status === 'done') {
+      r.used = unitsBetween(s.startDate, s.doneDate || today, tid);
+      r.late = r.used > total; r.over = Math.max(0, r.used - total);
+      return r;
+    }
+    if (today < s.startDate) { r.notYet = true; r.used = 0; r.remaining = total; return r; }
+    r.used = unitsBetween(s.startDate, addDays(today, -1), tid);
+    if (r.deadline && today > r.deadline) { r.overdue = true; r.remaining = 0; r.overBy = unitsBetween(addDays(r.deadline, 1), today, tid); }
+    else r.remaining = r.deadline ? unitsBetween(today, r.deadline, tid) : Math.max(0, total - r.used);
+    return r;
+  }
+  function remainingText(i, s) {
+    if (i.notYet) return 'מתחיל ' + fmtDate(s.startDate);
+    if (i.overdue) return i.overBy ? 'באיחור של ' + daysText(i.overBy) : 'הזמן נגמר';
+    if (i.deadline === todayISO()) return 'היום היום האחרון!';
+    if (i.remaining === 1) return 'נותר יום אחד';
+    if (i.remaining === 0.5) return 'נותר חצי יום';
+    return 'נותרו ' + daysText(i.remaining);
+  }
+
+  /* ---------- Data access ---------- */
+  const ROLE = { admin: 'חופף ראשי', mentor: 'חופף אישי', trainee: 'נחפף' };
+  /* Hebrew by gender: the admin sets it per user; without it the text falls back to the slash form. */
+  const G = (u, male, female, both) => u && u.gender === 'm' ? male : u && u.gender === 'f' ? female : both;
+  const roleName = u => ({ admin: G(u, 'חופף ראשי', 'חופפת ראשית', 'חופף ראשי'), mentor: G(u, 'חופף אישי', 'חופפת אישית', 'חופף אישי'), trainee: G(u, 'נחפף', 'נחפפת', 'נחפף') }[u.role]);
+  const users = () => Object.values(db.users).sort(byName);
+  const trainees = () => users().filter(u => u.role === 'trainee');
+  const userName = id => (db.users[id] && db.users[id].name) || '';
+  function me() { const id = lsGet(LS_SESSION, null); return (id && db.users[id]) || null; }
+  const canManage = (m, t) => m.role === 'admin' || (m.role === 'mentor' && t.mentorId === m.id);
+  const canEdit = (m, t) => canManage(m, t) || m.id === t.id;
+  const visibleTrainees = m => m.role === 'admin' ? trainees() : trainees().filter(t => t.mentorId === m.id);
+  const bySortKey = (a, b) => ((a.order || 0) - (b.order || 0)) || ((a.createdAt || 0) - (b.createdAt || 0));
+  const sprintsOf = tid => Object.values(db.sprints).filter(s => s.traineeId === tid).sort(bySortKey);
+  /* "stuck" was an older status; it now reads as "working on it". */
+  const questionsOf = tid => Object.values(db.questions).filter(q => q.traineeId === tid).map(q => q.status === 'stuck' ? Object.assign({}, q, { status: 'doing' }) : q).sort(bySortKey);
+  const messagesOf = tid => Object.values(db.messages).filter(x => x.traineeId === tid).sort((a, b) => b.at - a.at);
+  const planParts = () => (db.settings.plan && db.settings.plan.parts) || [];
+  const groups = () => (db.settings.groups && db.settings.groups.list) || [];
+  const groupName = id => { const g = groups().find(x => x.id === id); return g ? g.name : ''; };
+  const inGroup = (t, g) => g === 'all' || (g === 'none' ? !groupName(t.groupId) : t.groupId === g);
+  const issuesOf = tid => Object.values(db.issues).filter(x => x.traineeId === tid).sort((a, b) => b.at - a.at);
+  const openIssues = tid => issuesOf(tid).filter(x => x.status !== 'resolved');
+  /* Next date a personal talk happens on or after `from` (repeating talks roll forward by their interval). */
+  function nextTalkDate(k, from) {
+    if (!k.date) return null;
+    if (!k.repeat) return k.date >= from ? k.date : null;
+    let d = k.date;
+    for (let i = 0; d < from && i < 500; i++) d = addDays(d, k.repeat);
+    return d;
+  }
+  function upcomingTalks(filter) {
+    const today = todayISO();
+    return Object.values(db.talks).filter(filter).map(k => ({ k, d: nextTalkDate(k, today) })).filter(x => x.d)
+      .sort((a, b) => a.d < b.d ? -1 : a.d > b.d ? 1 : (a.k.time || '').localeCompare(b.k.time || ''));
+  }
+  const whenText = d => d === todayISO() ? 'היום' : d === addDays(todayISO(), 1) ? 'מחר' : fmtDate(d);
+  const REPEAT = { 0: 'חד־פעמית', 7: 'כל שבוע', 14: 'כל שבועיים' };
+  const nameTaken = (name, except) => users().some(u => u.id !== except && u.name.trim().toLowerCase() === name.trim().toLowerCase());
+
+  const SP_STATUS = { todo: ['טרם התחיל', ''], active: ['בעבודה', 'acc'], overdue: ['באיחור', 'bad'], done: ['הושלם', 'ok'] };
+  const tStatus = (st, t) => ({ empty: ['אין עדיין פורטנייטים', ''], overdue: ['באיחור', 'bad'], active: ['בזמן', 'ok'], finished: [G(t, 'סיים', 'סיימה', 'סיים/ה') + ' 🎓', 'info'], idle: [G(t, 'ממתין', 'ממתינה', 'ממתין/ה') + ' לפורטנייט הבא', 'warn'] }[st]);
+  const qStatus = (st, t) => ({ todo: ['עוד לא התחלתי', ''], doing: [G(t, 'עובד', 'עובדת', 'עובד/ת') + ' על זה', 'info'], done: ['בוצע', 'ok'] }[st]);
+  const badge = ([t, c]) => '<span class="badge ' + c + '">' + t + '</span>';
+  const sprintState = (s, i) => s.status === 'active' && i.overdue ? 'overdue' : s.status;
+
+  function summary(t) {
+    const sp = sprintsOf(t.id);
+    const infos = sp.map(s => ({ s, i: sprintInfo(s) }));
+    const done = sp.filter(s => s.status === 'done').length;
+    const active = infos.filter(x => x.s.status === 'active');
+    const overdue = active.filter(x => x.i.overdue);
+    const next = sp.find(s => s.status === 'todo');
+    const qs = questionsOf(t.id);
+    const qDone = qs.filter(q => q.status === 'done').length;
+    let status = 'idle';
+    if (!sp.length) status = 'empty';
+    else if (overdue.length) status = 'overdue';
+    else if (active.length) status = 'active';
+    else if (done === sp.length) status = 'finished';
+    return {
+      sp, infos, done, total: sp.length, active, overdue, next, qs, qDone, status,
+      current: overdue[0] || active[0] || null,
+      lateDone: infos.filter(x => x.s.status === 'done' && x.i.late).length,
+      extDays: sp.reduce((a, s) => a + extTotal(s), 0)
+    };
+  }
+  function stageText(sm, t) {
+    if (sm.current) return sm.current.s.title;
+    if (sm.next) return 'הבא בתור: ' + sm.next.title;
+    if (sm.status === 'finished') return G(t, 'סיים', 'סיימה', 'סיים/ה') + ' את כל החלקים';
+    return 'עוד לא נבנתה תכנית';
+  }
+  function avatar(u, size) {
+    let h = 0; const n = (u && u.name) || '?';
+    for (let i = 0; i < n.length; i++) h = (h * 31 + n.charCodeAt(i)) % 360;
+    return '<span class="av ' + (size || '') + '" style="--h:' + h + '" aria-hidden="true">' + esc(n.trim().charAt(0) || '?') + '</span>';
+  }
+  function seenKey(m, tid) { return m.id + ':' + tid; }
+  function unreadCount(t, m) {
+    const seen = lsGet(LS_SEEN, {})[seenKey(m, t.id)] || 0;
+    return messagesOf(t.id).filter(x => x.fromId !== m.id && x.at > seen).length;
+  }
+
+  /* ================= Rendering ================= */
+  const ui = { loginId: null, loginErr: '', qFilter: 'all', cal: {}, noteColor: 'c1', seenPrev: {}, group: 'all', attWeek: null, busy: false };
+  let renderPending = false;
+  function scheduleRender() { if (renderPending) return; renderPending = true; queueMicrotask(() => { renderPending = false; render(); }); }
+
+  /* Re-rendering must not eat what someone is typing (data can arrive from another device mid-sentence). */
+  function snapshotInputs() {
+    const out = { vals: {}, focus: null };
+    app.querySelectorAll('[data-keep]').forEach(el => { if (el.id) out.vals[el.id] = (el.type === 'checkbox' || el.type === 'radio') ? { c: el.checked } : { v: el.value }; });
+    const a = document.activeElement;
+    if (a && a.id && app.contains(a)) { out.focus = { id: a.id }; try { out.focus.s = a.selectionStart; out.focus.e = a.selectionEnd; } catch (e) {} }
+    return out;
+  }
+  function restoreInputs(k) {
+    Object.keys(k.vals).forEach(id => { const el = $(id); if (!el) return; const x = k.vals[id]; if ('c' in x) el.checked = x.c; else el.value = x.v; });
+    if (k.focus) { const el = $(k.focus.id); if (el) { el.focus({ preventScroll: true }); try { if (k.focus.s != null) el.setSelectionRange(k.focus.s, k.focus.e); } catch (e) {} } }
+  }
+
+  let lastRoute = null;
+  function render() {
+    const keep = snapshotInputs();
+    app.innerHTML = view();
+    restoreInputs(keep);
+    afterRender();
+  }
+  function afterRender() {
+    const m = ready && me();
+    if (!m || !lastRoute || lastRoute.page !== 't' || lastRoute.tab !== 'sprints') return;
+    const key = seenKey(m, lastRoute.tid), seen = lsGet(LS_SEEN, {});
+    if (!(key in ui.seenPrev)) ui.seenPrev[key] = seen[key] || 0;
+    const newest = messagesOf(lastRoute.tid).reduce((a, x) => Math.max(a, x.at), 0);
+    if (newest > (seen[key] || 0)) { seen[key] = newest; lsSet(LS_SEEN, seen); }
+  }
+
+  function route() {
+    const h = location.hash.replace(/^#\/?/, '').split('/');
+    if (h[0] === 't') return { page: 't', tid: h[1], tab: ['sprints', 'questions', 'issues', 'calendar'].indexOf(h[2]) >= 0 ? h[2] : 'sprints' };
+    return { page: h[0] || 'home' };
+  }
+  function resolveRoute(m) {
+    const r = route();
+    if (m.role === 'trainee') return { page: 't', tid: m.id, tab: r.page === 't' ? r.tab : 'sprints' };
+    if (r.page === 't') { const t = db.users[r.tid]; return t && t.role === 'trainee' && canManage(m, t) ? r : { page: 'home' }; }
+    const allowed = m.role === 'admin' ? ['home', 'reports', 'attendance', 'users', 'plan', 'holidays'] : ['home', 'reports', 'attendance'];
+    return allowed.indexOf(r.page) >= 0 ? r : { page: 'home' };
+  }
+
+  function view() {
+    lastRoute = null;
+    const loader = '<div class="center"><div class="auth-hero"><div class="loader">🌱</div><p>טוען את החפיפה…</p></div></div>';
+    if (loadError) return errorView();
+    let m;
+    if (useCloud) {
+      if (!authReady || pub.owner === undefined || !pub.namesLoaded || !pub.claimsLoaded) return loader;
+      if (!authUser || !dataStarted) return pub.owner === null ? setupView() : loginView();
+      if (!ready) return loader;
+      m = me();
+      if (!m) return '<div class="center"><div class="card auth"><div class="auth-hero"><div class="hero-ico">🤔</div><h1>החשבון לא נמצא</h1><p>ייתכן שהמשתמש נמחק. פנו לחופף הראשי.</p></div><button class="btn primary" style="width:100%" data-act="logout">יציאה</button></div></div>';
+    } else {
+      if (!ready) return loader;
+      if (!Object.keys(db.users).length) return setupView();
+      m = me();
+      if (!m) return loginView();
+    }
+    const r = resolveRoute(m);
+    lastRoute = r;
+    let page;
+    if (r.page === 't') page = traineePage(db.users[r.tid], m, r.tab);
+    else if (r.page === 'reports') page = reportsView(m);
+    else if (r.page === 'users') page = usersView(m);
+    else if (r.page === 'plan') page = planView();
+    else if (r.page === 'holidays') page = holidaysView(m);
+    else if (r.page === 'attendance') page = attendanceView(m);
+    else page = homeView(m);
+    return headerView(m, r) + '<main class="wrap">' + talkBanner(m) + page + '</main>';
+  }
+
+  const SYNC_TEXT = { demo: 'מצב הדגמה, שום דבר לא נשמר', local: 'שמור בדפדפן הזה בלבד', connecting: 'מתחבר…', online: 'מסונכרן', offline: 'אין חיבור, נשמר מקומית', error: 'שגיאת סנכרון' };
+  const syncPill = () => '<span class="sync ' + syncState + '" title="' + SYNC_TEXT[syncState] + '"><span>' + SYNC_TEXT[syncState] + '</span></span>';
+
+  function headerView(m, r) {
+    let links;
+    if (m.role === 'trainee') {
+      links = [['#/t/' + m.id + '/sprints', 'ההתקדמות שלי', r.tab === 'sprints'], ['#/t/' + m.id + '/questions', 'הצ׳קליסט שלי', r.tab === 'questions'], ['#/t/' + m.id + '/issues', 'דיווחים', r.tab === 'issues'], ['#/t/' + m.id + '/calendar', 'לוח שנה', r.tab === 'calendar']];
+    } else {
+      links = [['#/home', m.role === 'admin' ? 'נחפפים' : 'הנחפפים שלי', r.page === 'home' || r.page === 't'], ['#/reports', 'דוחות', r.page === 'reports'], ['#/attendance', 'נוכחות', r.page === 'attendance']];
+      if (m.role === 'admin') links.push(['#/users', 'משתמשים', r.page === 'users'], ['#/plan', 'תכנית החפיפה', r.page === 'plan'], ['#/holidays', 'חגים', r.page === 'holidays']);
+    }
+    return '<header class="top"><div class="top-in">' +
+      '<a class="brand" href="#/"><span class="brand-ico">🌱</span><span>מסלול החפיפה</span></a>' +
+      '<nav class="nav" aria-label="ניווט ראשי">' + links.map(([h, l, on]) => '<a href="' + h + '" class="' + (on ? 'on' : '') + '"' + (on ? ' aria-current="page"' : '') + '>' + l + '</a>').join('') + '</nav>' +
+      '<div class="me">' + syncPill() + avatar(m, 'sm') + '<span class="me-name">' + esc(m.name) + '<small>' + roleName(m) + '</small></span>' +
+      (useCloud ? '<button class="icon-btn" data-act="changePw" title="שינוי סיסמה" aria-label="שינוי סיסמה">🔑</button>' : '') +
+      '<button class="btn ghost sm" data-act="logout">יציאה</button></div></div></header>';
+  }
+
+  /* Reminder on every page for a mentor whose personal talk is today or tomorrow. */
+  function talkBanner(m) {
+    if (m.role === 'trainee') return '';
+    const soon = upcomingTalks(k => k.mentorId === m.id && db.users[k.traineeId]).filter(x => x.d <= addDays(todayISO(), 1));
+    if (!soon.length) return '';
+    return '<div class="banner" role="status">' + soon.map(x => '<div><span aria-hidden="true">⏰</span> <b>שיחה אישית עם ' + esc(userName(x.k.traineeId)) + '</b> ' + whenText(x.d) +
+      (x.k.time ? ' ב-' + esc(x.k.time) : '') + (x.k.note ? ' <span class="muted">· ' + esc(x.k.note) + '</span>' : '') + '</div>').join('') + '</div>';
+  }
+
+  function errorView() {
+    const msg = loadError === 'rules'
+      ? 'Firebase חסם את הגישה. צריך לעדכן את כללי האבטחה (Rules) לפי ההוראות בקובץ README.'
+      : 'לא הצלחנו להתחבר ל-Firebase. בדקו את החיבור לאינטרנט ואת ההגדרות בקובץ firebase-config.js.';
+    return '<div class="center"><div class="card auth"><div class="auth-hero"><div class="hero-ico">🙈</div><h1>משהו השתבש</h1><p>' + msg + '</p></div><button class="btn primary" style="width:100%" onclick="location.reload()">לנסות שוב</button></div></div>';
+  }
+
+  function setupView() {
+    return '<div class="center"><div class="card auth">' +
+      '<div class="auth-hero"><div class="hero-ico">🌱</div><h1>ברוכים הבאים למסלול החפיפה</h1><p>נתחיל ביצירת החופף הראשי, מי שמנהל את כל החפיפה.</p></div>' +
+      '<form data-form="setup" autocomplete="off">' +
+      '<label class="field"><span>השם שלך</span><input type="text" name="name" id="su-name" data-keep required maxlength="40"></label>' +
+      '<label class="field"><span>סיסמה</span><input type="password" name="pw" required minlength="' + PW_MIN + '" autocomplete="new-password"><small>לפחות ' + PW_MIN + ' תווים</small></label>' +
+      '<label class="field"><span>שוב את הסיסמה</span><input type="password" name="pw2" required minlength="' + PW_MIN + '" autocomplete="new-password"></label>' +
+      '<p class="err">' + esc(ui.loginErr) + '</p>' +
+      '<button class="btn primary" style="width:100%"' + (ui.busy ? ' disabled' : '') + '>' + (ui.busy ? 'רגע…' : 'יצירה והתחלה ✨') + '</button></form>' +
+      (useCloud ? '' : '<p class="note-box">האתר עוד לא מחובר ל-Firebase, ולכן הנתונים נשמרים רק בדפדפן הזה. כדי שכל אחד יתחבר מהמחשב שלו, עקבו אחרי ההוראות בקובץ README.</p>') +
+      '</div></div>';
+  }
+
+  /* Who appears on the login screen, and whether they already chose a password. */
+  const loginPeople = () => useCloud ? Object.values(pub.names).sort(byName) : users();
+  const hasAccount = u => useCloud ? !!pub.claims[u.id] : !!u.passHash;
+  function loginView() {
+    const u = ui.loginId && loginPeople().find(x => x.id === ui.loginId);
+    let inner;
+    if (u) {
+      const first = !hasAccount(u);
+      inner = '<div class="picked">' + avatar(u, 'lg') + '<div><h2>' + (first ? 'שלום ' + esc(u.name) + '! 👋' : 'היי ' + esc(u.name)) + '</h2><p class="muted">' +
+        (first ? 'זו הכניסה הראשונה שלך. ' + (useCloud ? 'הקלידו את הקוד שקיבלתם מהחופף הראשי, ו' : '') + G(u, 'בחר סיסמה ותזכור אותה.', 'בחרי סיסמה ותזכרי אותה.', 'בחר/י סיסמה ותזכור/י אותה.') : 'מה הסיסמה שלך?') + '</p></div></div>' +
+        '<form data-form="login">' +
+        (first && useCloud ? '<label class="field"><span>קוד כניסה ראשונה</span><input type="text" name="code" id="lg-code" required inputmode="numeric" maxlength="6" autocomplete="one-time-code"></label>' : '') +
+        '<label class="field"><span>' + (first ? 'סיסמה חדשה' : 'סיסמה') + '</span><input type="password" name="pw" id="lg-pw" required ' + (first ? 'minlength="' + PW_MIN + '" autocomplete="new-password"' : 'autocomplete="current-password"') + '>' + (first ? '<small>לפחות ' + PW_MIN + ' תווים</small>' : '') + '</label>' +
+        (first ? '<label class="field"><span>שוב את הסיסמה</span><input type="password" name="pw2" required minlength="' + PW_MIN + '" autocomplete="new-password"></label>' : '') +
+        '<p class="err">' + esc(ui.loginErr) + '</p>' +
+        '<div class="row"><button class="btn primary grow"' + (ui.busy ? ' disabled' : '') + '>' + (ui.busy ? 'רגע…' : first ? 'שמירה וכניסה' : 'כניסה') + '</button><button type="button" class="btn ghost" data-act="loginBack">זה לא אני</button></div></form>';
+    } else {
+      const people = loginPeople();
+      inner = '<div class="auth-hero"><div class="hero-ico">🌱</div><h1>מי נכנס/ת?</h1><p>בוחרים את השם שלך מהרשימה</p></div>' +
+        (people.length ? '<div class="who">' + people.map(x => '<button type="button" data-act="loginPick" data-id="' + x.id + '">' + avatar(x, 'sm') + '<span class="nm">' + esc(x.name) + '</span></button>').join('') + '</div>'
+          : '<p class="muted" style="text-align:center">עוד אין משתמשים.</p>');
+    }
+    return '<div class="center"><div class="card auth">' + inner + '</div></div>';
+  }
+
+  /* ---------- Home (mentor / admin) ---------- */
+  /* Group filter chips (only when groups exist); the chosen group sticks while moving between pages. */
+  function groupChips(list) {
+    const gs = groups();
+    if (!gs.length) return '';
+    if (ui.group !== 'all' && ui.group !== 'none' && !gs.some(g => g.id === ui.group)) ui.group = 'all';
+    const opts = [['all', 'כולם', list.length]].concat(gs.map(g => [g.id, g.name, list.filter(t => t.groupId === g.id).length]).filter(x => x[2] || ui.group === x[0]));
+    const none = list.filter(t => !groupName(t.groupId)).length;
+    if (none) opts.push(['none', 'בלי קבוצה', none]);
+    return '<div class="chips" role="group" aria-label="סינון לפי קבוצה" style="margin-bottom:16px">' + opts.map(([k, l, c]) =>
+      '<button class="chip' + (ui.group === k ? ' on' : '') + '" data-act="pickGroup" data-g="' + k + '" aria-pressed="' + (ui.group === k) + '">' + esc(l) + ' · ' + c + '</button>').join('') + '</div>';
+  }
+  function homeView(m) {
+    const all = visibleTrainees(m), list = all.filter(t => inGroup(t, ui.group));
+    const head = '<div class="page-head"><div><h1>' + (m.role === 'admin' ? 'כל הנחפפים' : 'הנחפפים שלי') + ' 🌷</h1><p>' +
+      (all.length ? all.length + ' נחפפים · לחצו על כרטיס כדי לראות ולערוך את העמוד' : '') + '</p></div>' +
+      (m.role === 'admin' ? '<a class="btn primary" href="#/users">＋ משתמש חדש</a>' : '') + '</div>';
+    const talks = all.length ? talksCard(m) : '';
+    if (!all.length) {
+      return head + '<div class="card empty"><span class="big">🐣</span><b>עוד אין כאן נחפפים</b>' +
+        (m.role === 'admin' ? 'אפשר להוסיף נחפפים וחופפים אישיים בעמוד <a href="#/users">משתמשים</a>.' : 'החופף הראשי עוד לא שייך אליך נחפפים.') + '</div>';
+    }
+    let cards;
+    if (ui.group === 'all' && groups().length) {
+      /* With groups, "everyone" is shown as one section per group. */
+      const secs = groups().map(g => [g.name, list.filter(t => t.groupId === g.id)]).concat([['בלי קבוצה', list.filter(t => !groupName(t.groupId))]]).filter(x => x[1].length);
+      cards = secs.map(([name, ts]) => '<h2 class="grp-title">' + esc(name) + ' <span class="muted sm">' + ts.length + '</span></h2><div class="tgrid">' + ts.map(t => traineeCard(t, m)).join('') + '</div>').join('');
+    } else cards = list.length ? '<div class="tgrid">' + list.map(t => traineeCard(t, m)).join('') + '</div>' : '<p class="muted">אין נחפפים בקבוצה הזו.</p>';
+    return head + talks + groupChips(all) + cards;
+  }
+  function talksCard(m) {
+    const list = upcomingTalks(k => k.mentorId === m.id && db.users[k.traineeId]);
+    return '<section class="card" style="margin-bottom:20px"><div class="card-head"><h2>🗓️ השיחות האישיות שלי</h2><button class="btn soft sm" data-act="talkEdit" data-id="">＋ שיחה חדשה</button></div>' +
+      (list.length ? '<ul class="marked">' + list.slice(0, 12).map(x => '<li><b class="num" style="min-width:110px">' + whenText(x.d) + (x.k.time ? ' · ' + esc(x.k.time) : '') + '</b>' +
+        '<span class="grow">' + esc(userName(x.k.traineeId)) + (x.k.note ? ' <span class="muted">· ' + esc(x.k.note) + '</span>' : '') + '</span>' +
+        '<span class="badge">' + REPEAT[x.k.repeat || 0] + '</span>' +
+        '<button class="icon-btn" data-act="talkEdit" data-id="' + x.k.id + '" aria-label="עריכה">✏️</button><button class="icon-btn" data-act="talkDel" data-id="' + x.k.id + '" aria-label="מחיקה">🗑️</button></li>').join('') + '</ul>'
+        : '<p class="hint" style="margin:0">עוד לא נקבעו שיחות. שיחה שנקבעה להיום או למחר תופיע כתזכורת בראש כל עמוד.</p>') + '</section>';
+  }
+  function traineeCard(t, m) {
+    const sm = summary(t), pct = sm.total ? Math.round(sm.done / sm.total * 100) : 0, unread = unreadCount(t, m);
+    const cur = sm.current, issues = openIssues(t.id).length;
+    return '<a class="card tcard" href="#/t/' + t.id + '/sprints">' +
+      '<div class="tc-head">' + avatar(t) + '<div><h3>' + esc(t.name) + '</h3>' +
+      (m.role === 'admin' ? '<div class="muted sm">חופף אישי: ' + esc(userName(t.mentorId) || 'לא שויך') + '</div>' : '') + '</div>' +
+      (issues ? '<span class="unread warn-b" title="דיווחים פתוחים">⚑ ' + issues + '</span>' : '') +
+      (unread ? '<span class="unread" title="פתקים חדשים">💌 ' + unread + '</span>' : '') + '</div>' +
+      '<div class="tc-stage"><span class="eyebrow">שלב נוכחי</span><b>' + esc(stageText(sm, t)) + '</b>' +
+      (cur ? '<span class="t' + (cur.i.overdue ? ' bad' : '') + '">' + remainingText(cur.i, cur.s) + (cur.i.deadline && !cur.i.overdue ? ' · עד ' + fmtDate(cur.i.deadline) : '') + '</span>' : '') + '</div>' +
+      '<div class="bar" role="img" aria-label="' + pct + '% מהחלקים הושלמו"><i style="width:' + pct + '%"></i></div>' +
+      '<div class="tc-foot"><span>' + sm.done + '/' + sm.total + ' חלקים · ' + sm.qDone + '/' + sm.qs.length + ' שאלות</span>' + badge(tStatus(sm.status, t)) + '</div></a>';
+  }
+
+  /* ---------- Trainee page ---------- */
+  function traineePage(t, m, tab) {
+    let head = '';
+    if (t.id !== m.id) {
+      head = '<div class="t-head"><a class="back" href="#/home">→ חזרה לנחפפים</a><div class="t-id">' + avatar(t, 'lg') + '<div><h1>' + esc(t.name) + '</h1>' +
+        '<div class="muted">חופף אישי: ' + esc(userName(t.mentorId) || 'לא שויך') + (groupName(t.groupId) ? ' · ' + esc(groupName(t.groupId)) : '') + (t.startDate ? ' · בחפיפה מ' + fmtDate(t.startDate) : '') + '</div></div></div>' +
+        '<nav class="tabs" aria-label="עמודי הנחפף">' + [['sprints', 'פורטנייטים ופתקים'], ['questions', 'צ׳קליסט'], ['issues', 'דיווחים' + (openIssues(t.id).length ? ' (' + openIssues(t.id).length + ')' : '')], ['calendar', 'לוח שנה']].map(([k, l]) =>
+          '<a href="#/t/' + t.id + '/' + k + '" class="' + (tab === k ? 'on' : '') + '">' + l + '</a>').join('') + '</nav></div>';
+    }
+    if (tab === 'questions') return head + questionsTab(t, m);
+    if (tab === 'calendar') return head + calendarTab(t, m);
+    if (tab === 'issues') return head + issuesTab(t, m);
+    return head + (t.id === m.id ? traineeHome(t, m) : sprintsTab(t, m));
+  }
+
+  function greeting() {
+    const h = new Date().getHours();
+    return h < 12 ? ['בוקר טוב', '☀️'] : h < 17 ? ['צהריים טובים', '🌤️'] : h < 21 ? ['ערב טוב', '🌙'] : ['לילה טוב', '✨'];
+  }
+  function encourage(sm, qd, qn, t) {
+    if (sm.status === 'finished') return 'סיימת את כל החפיפה! איזה כיף 🎓';
+    if (sm.status === 'empty') return 'התכנית שלך עוד בבנייה. ' + G(db.users[t.mentorId], 'החופף האישי שלך יוסיף', 'החופפת האישית שלך תוסיף', 'החופף האישי שלך יוסיף') + ' אותה בקרוב.';
+    if (sm.status === 'idle') return G(t, 'מוכן', 'מוכנה', 'מוכנ/ה') + ' לפורטנייט הבא? 🚀';
+    if (qn && qd === qn) return 'סימנת את כל השאלות! אפשר לסמן שסיימת 🎉';
+    if (qn && qd / qn >= 0.5) return 'כבר עברת את חצי הדרך בחלק הזה 💪';
+    return '';
+  }
+  const qStats = (t, s) => { const qs = questionsOf(t.id).filter(q => q.sprintId === s.id); return [qs.filter(q => q.status === 'done').length, qs.length]; };
+
+  /* The trainee's own page: progress first, no countdowns or "late" marks. */
+  function traineeHome(t, m) {
+    const sm = summary(t), cur = sm.active[0] ? sm.active[0].s : null;
+    const [qd, qn] = cur ? qStats(t, cur) : [0, 0];
+    const [g, ge] = greeting();
+    const enc = encourage(sm, qd, qn, t);
+    const hello = '<div class="hello"><h1>' + g + ', ' + esc(t.name) + ' ' + ge + '</h1>' + (enc ? '<p>' + enc + '</p>' : '') + '</div>';
+    let main;
+    if (cur) {
+      const i = sprintInfo(cur), pct = qn ? Math.round(qd / qn * 100) : 0;
+      main = '<section class="card now"><div class="eyebrow">עכשיו אני בפורטנייט</div><h2 class="now-title">' + esc(cur.title) + '</h2>' + (cur.desc ? '<p class="muted">' + esc(cur.desc) + '</p>' : '') +
+        '<div class="now-body">' + progressRing(pct) + '<div class="sp-facts"><div class="big-line">' + (qn ? qd + ' מתוך ' + qn + ' שאלות' : 'אין עדיין שאלות בחלק הזה') + '</div>' +
+        '<div class="bar big" role="img" aria-label="' + pct + '% מהשאלות בוצעו"><i style="width:' + pct + '%"></i></div>' +
+        (!i.overdue && i.deadline ? '<div class="facts">מתוכנן עד ' + fmtDate(i.deadline) + '</div>' : '') +
+        '<div class="row"><a class="btn soft" href="#/t/' + t.id + '/questions">לצ׳קליסט ✅</a><button class="btn primary" data-act="finishSprint" data-id="' + cur.id + '">סיימתי! 🎉</button></div>' +
+        '</div></div></section>';
+    } else if (sm.next) {
+      main = '<section class="card now"><div class="eyebrow">החלק הבא</div><h2 class="now-title">' + esc(sm.next.title) + '</h2>' + (sm.next.desc ? '<p class="muted">' + esc(sm.next.desc) + '</p>' : '') +
+        '<div class="row" style="margin-top:14px"><button class="btn primary" data-act="startSprint" data-id="' + sm.next.id + '">▶ מתחילים</button></div></section>';
+    } else {
+      main = '<section class="card empty"><span class="big">' + (sm.sp.length ? '🎓' : '🗺️') + '</span><b>' + (sm.sp.length ? 'סיימת את כל החלקים!' : 'עוד אין חלקים') + '</b></section>';
+    }
+    const upcoming = sm.sp.filter(s => s.status === 'todo' && (!sm.next || s.id !== sm.next.id || cur));
+    const next = upcoming.length ? '<div class="sec-head"><h2>מה הלאה</h2></div><ol class="journey">' + upcoming.map(s => '<li><span class="j-dot" aria-hidden="true"></span><div><b>' + esc(s.title) + '</b>' + (s.desc ? '<div class="muted sm">' + esc(s.desc) + '</div>' : '') + '</div></li>').join('') + '</ol>' : '';
+    const doneList = sm.sp.filter(s => s.status === 'done');
+    const done = doneList.length ? '<div class="sec-head"><h2>מה שכבר סיימת ✓</h2></div><ol class="journey done">' + doneList.map(s => {
+      const [d, n] = qStats(t, s);
+      return '<li><span class="j-dot" aria-hidden="true">✓</span><div><b>' + esc(s.title) + '</b><div class="muted sm">הסתיים ' + fmtDate(s.doneDate) + (n ? ' · ' + d + '/' + n + ' שאלות' : '') + '</div></div></li>';
+    }).join('') + '</ol>' : '';
+    return '<div class="layout"><section class="main-col">' + hello + main + next + done + '</section>' +
+      '<aside class="side-col">' + weekCard(t, m) + notesCard(t, m) + '</aside></div>';
+  }
+  function progressRing(pct) {
+    const R = 42, C = 2 * Math.PI * R;
+    return '<div class="ring" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="trk" cx="50" cy="50" r="' + R + '"/>' +
+      '<circle class="val" cx="50" cy="50" r="' + R + '" stroke-dasharray="' + C.toFixed(2) + '" stroke-dashoffset="' + (C * (1 - pct / 100)).toFixed(2) + '"/></svg>' +
+      '<div class="ring-in"><b>' + pct + '%</b><span>מהשאלות</span></div></div>';
+  }
+  /* What a mentor sees for one trainee: the deadline picture comes first. */
+  function sprintsTab(t, m) {
+    const sm = summary(t), mgr = canManage(m, t), cur = sm.current;
+    let focus;
+    if (cur) {
+      const [qd, qn] = qStats(t, cur.s), ext = extTotal(cur.s);
+      focus = '<section class="card overview mgr-focus ' + (cur.i.overdue ? 'is-late' : '') + '"><div class="ov-top"><div><div class="eyebrow">הפורטנייט הנוכחי</div><h2>' + esc(cur.s.title) + '</h2></div>' + badge(tStatus(sm.status, t)) + '</div>' +
+        '<div class="mf-grid"><div><div class="eyebrow">זמן</div><b class="' + (cur.i.overdue ? 'bad-t' : '') + '">' + remainingText(cur.i, cur.s) + '</b></div>' +
+        '<div><div class="eyebrow">דדליין</div><b>' + (cur.i.deadline ? fmtDate(cur.i.deadline) : '—') + '</b></div>' +
+        '<div><div class="eyebrow">מוקצב</div><b>' + daysText(cur.i.total) + (ext ? ' <span class="muted sm">כולל ' + daysText(ext) + ' הארכה</span>' : '') + '</b></div>' +
+        '<div><div class="eyebrow">צ׳קליסט</div><b>' + qd + '/' + qn + '</b></div></div></section>';
+    } else {
+      focus = '<section class="card overview"><div class="ov-top"><div><div class="eyebrow">הפורטנייט הנוכחי</div><h2>' + esc(stageText(sm, t)) + '</h2></div>' + badge(tStatus(sm.status, t)) + '</div></section>';
+    }
+    const nextTalk = upcomingTalks(k => k.traineeId === t.id)[0], issues = openIssues(t.id).length;
+    const meta = '<div class="ov-meta" style="margin:12px 4px 0"><span>חלקים שהושלמו: <b>' + sm.done + '/' + sm.total + '</b></span>' +
+      (sm.lateDone ? '<span>הסתיימו באיחור: <b>' + sm.lateDone + '</b></span>' : '') +
+      (sm.extDays ? '<span>סה״כ הארכות: <b>' + daysText(sm.extDays) + '</b></span>' : '') +
+      '<span>דיווחים פתוחים: <b>' + (issues ? '<a href="#/t/' + t.id + '/issues">' + issues + '</a>' : '0') + '</b></span>' +
+      '<span>שיחה אישית: <b>' + (nextTalk ? whenText(nextTalk.d) + (nextTalk.k.time ? ' ' + esc(nextTalk.k.time) : '') : 'לא נקבעה') + '</b></span></div>';
+    const actions = '<div class="sec-head"><h2>הפורטנייטים</h2><div class="row">' +
+      (mgr && planParts().length ? '<button class="btn ghost sm" data-act="applyPlan" data-tid="' + t.id + '">טעינה מתכנית החפיפה</button>' : '') +
+      (mgr ? '<button class="btn primary" data-act="addSprint" data-tid="' + t.id + '">＋ פורטנייט חדש</button>' : '') + '</div></div>';
+    /* What the trainee is on now, then what they finished, then what is still ahead. Arrows reorder within a section. */
+    const num = s => sm.sp.indexOf(s) + 1;
+    const section = (title, list) => list.length ? '<h3 class="sp-sec">' + title + '</h3>' + list.map((s, i) => sprintCard(s, t, m, num(s), i > 0, i < list.length - 1)).join('') : '';
+    const list = sm.sp.length ? section('עכשיו', sm.sp.filter(s => s.status === 'active')) + section('הסתיימו', sm.sp.filter(s => s.status === 'done')) + section('הבאים בתור', sm.sp.filter(s => s.status === 'todo'))
+      : '<div class="card empty"><span class="big">🗺️</span><b>אין עדיין פורטנייטים</b>' + (mgr ? 'לחצו על "פורטנייט חדש" או טענו את תכנית החפיפה.' : '') + '</div>';
+    return '<div class="layout"><section class="main-col">' + focus + meta + actions + '<div class="sprints">' + list + '</div></section>' +
+      '<aside class="side-col">' + weekCard(t, m) + notesCard(t, m) + '</aside></div>';
+  }
+
+  function ring(i) {
+    const R = 42, C = 2 * Math.PI * R;
+    const frac = i.overdue ? 1 : i.total ? Math.max(0, Math.min(1, i.remaining / i.total)) : 0;
+    const cls = i.overdue ? 'bad' : i.remaining <= 1 ? 'warn' : '';
+    const num = i.overdue ? '!' : fmtNum(i.remaining);
+    const lbl = i.overdue ? 'באיחור' : i.remaining === 1 ? 'יום נותר' : 'ימים נותרו';
+    return '<div class="ring ' + cls + '" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="trk" cx="50" cy="50" r="' + R + '"/>' +
+      '<circle class="val" cx="50" cy="50" r="' + R + '" stroke-dasharray="' + C.toFixed(2) + '" stroke-dashoffset="' + (C * (1 - frac)).toFixed(2) + '"/></svg>' +
+      '<div class="ring-in"><b>' + num + '</b><span>' + lbl + '</span></div></div>';
+  }
+
+  function sprintCard(s, t, m, num, canUp, canDown) {
+    /* Only mentors see these cards; trainees get traineeHome instead. */
+    const i = sprintInfo(s), mgr = canManage(m, t), edit = mgr, own = false;
+    const state = sprintState(s, i);
+    const qs = questionsOf(t.id).filter(q => q.sprintId === s.id), qd = qs.filter(q => q.status === 'done').length;
+    const ext = extTotal(s);
+    let body;
+    if (s.status === 'todo') {
+      body = '<div class="sp-todo"><div class="sp-alloc"><b>' + daysText(i.total) + '</b><span>מוקצבים לחלק הזה</span></div>' +
+        (edit ? '<button class="btn primary" data-act="startSprint" data-id="' + s.id + '">▶ התחלת פורטנייט</button>' : '') + '</div>';
+    } else if (s.status === 'active') {
+      body = '<div class="sp-active">' + ring(i) + '<div class="sp-facts">' +
+        '<div class="big-line">' + remainingText(i, s) + '</div>' +
+        (i.deadline ? '<div>' + (i.overdue ? 'הזמן נגמר ב' : 'צריך לסיים עד ') + '<b>' + fmtDate(i.deadline) + '</b></div>' : '<div class="muted">אין מספיק ימי עבודה לחישוב דדליין</div>') +
+        '<div class="facts">התחלה ' + fmtDate(s.startDate) + ' · מוקצב ' + daysText(i.total) + (ext ? ' (כולל ' + daysText(ext) + ' הארכה)' : '') + '</div>' +
+        (edit ? '<div class="row"><button class="btn primary" data-act="finishSprint" data-id="' + s.id + '">סימון שהסתיים ✓</button><button class="btn soft" data-act="extendSprint" data-id="' + s.id + '">＋ הארכה</button></div>' : '') +
+        '</div></div>';
+    } else {
+      body = '<div class="sp-done"><span class="done-check" aria-hidden="true">✓</span><div><div class="big-line">הסתיים ' + fmtDate(s.doneDate) + '</div>' +
+        '<div class="facts">לקח ' + daysText(i.used) + ' מתוך ' + daysText(i.total) + ' · התחלה ' + fmtDate(s.startDate) + '</div></div>' +
+        badge(i.late ? ['באיחור של ' + daysText(i.over), 'bad'] : ['בזמן 💪', 'ok']) + '</div>';
+    }
+    const exts = (s.extensions || []).length ? '<details class="exts"><summary>' + s.extensions.length + ' ' + (s.extensions.length === 1 ? 'הארכה' : 'הארכות') + ' · סה״כ ' + daysText(ext) + '</summary><ul>' +
+      s.extensions.map(e => '<li><b>＋' + daysText(+e.days) + '</b> ' + esc(e.reason) + ' <span class="muted">· ' + esc(userName(e.by) || '?') + ', ' + fmtShort(e.at) + '</span></li>').join('') + '</ul></details>' : '';
+    let tools = '';
+    if (mgr) tools += '<button class="icon-btn" data-act="moveSprint" data-dir="-1" data-id="' + s.id + '" title="העברה למעלה" aria-label="העברה למעלה" ' + (canUp ? '' : 'disabled') + '>▲</button>' +
+      '<button class="icon-btn" data-act="moveSprint" data-dir="1" data-id="' + s.id + '" title="העברה למטה" aria-label="העברה למטה" ' + (canDown ? '' : 'disabled') + '>▼</button>';
+    if (mgr && s.status === 'done') tools += '<button class="icon-btn" data-act="reopenSprint" data-id="' + s.id + '" title="פתיחה מחדש" aria-label="פתיחה מחדש">↺</button>';
+    if (mgr || own) tools += '<button class="icon-btn" data-act="editSprint" data-id="' + s.id + '" title="עריכה" aria-label="עריכה">✏️</button>';
+    if (mgr || (own && s.status === 'todo')) tools += '<button class="icon-btn" data-act="delSprint" data-id="' + s.id + '" title="מחיקה" aria-label="מחיקה">🗑️</button>';
+    const plan = s.planId && !s.qCopied ? planParts().find(p => p.id === s.planId) : null;
+    const pending = plan ? (plan.questions || []).length : 0;
+    const qLink = s.status === 'active' ? '<a class="link" href="#/t/' + t.id + '/questions">✅ ' + qd + '/' + qs.length + ' בצ׳קליסט</a>'
+      : s.status === 'done' && qs.length ? '<span class="muted sm">✅ ' + qd + '/' + qs.length + ' שאלות</span>'
+      : pending + qs.length ? '<span class="muted sm">📝 ' + (pending + qs.length) + ' שאלות יופיעו בצ׳קליסט כשמתחילים</span>' : '';
+    const foot = qLink + exts + (tools ? '<div class="tools">' + tools + '</div>' : '');
+    return '<article class="sprint st-' + state + '"><div class="sp-head"><span class="sp-num">' + num + '</span>' +
+      '<div class="sp-title"><h3>' + esc(s.title) + '</h3>' + (s.desc ? '<p>' + esc(s.desc) + '</p>' : '') + '</div>' + badge(SP_STATUS[state]) + '</div>' +
+      '<div class="sp-body">' + body + '</div>' + (foot ? '<div class="sp-foot">' + foot + '</div>' : '') + '</article>';
+  }
+
+  function weekCard(t, m) {
+    const edit = canEdit(m, t), today = todayISO();
+    let days = '';
+    for (let k = 0; k < 7; k++) {
+      const d = addDays(today, k), wd = parse(d).getDay(), weekend = wd >= 5, hol = absEntry('_global', d), abs = absEntry(t.id, d);
+      const fullHol = hol && !hol.half;
+      const st = weekend ? 'weekend' : fullHol ? 'holiday' : abs ? (abs.half ? 'half' : 'away') : hol ? 'holiday' : 'in';
+      const lbl = weekend ? 'סופ״ש' : fullHol ? esc(hol.note || 'חג / יום חופש') : abs ? esc(absLabel(abs)) : hol ? esc((hol.note || 'חג') + ' · חצי יום') : 'במאמן';
+      const v = dayValue(d, t.id), val = v ? (v === 1 ? '1' : '½') : '';
+      days += '<button class="day ' + st + (k === 0 ? ' today' : '') + '" ' + (!edit || weekend || fullHol ? 'disabled' : '') +
+        ' data-act="toggleAbs" data-tid="' + t.id + '" data-date="' + d + '" aria-pressed="' + !!abs + '">' +
+        '<span class="d-name">' + (k === 0 ? 'היום' : DAY_SHORT[wd] + '׳') + '</span><span class="d-num">' + dm(d) + '</span>' +
+        '<span class="d-st">' + lbl + '</span>' + (val ? '<span class="d-val">' + val + '</span>' : '') + '</button>';
+    }
+    return '<section class="card week"><div class="card-head"><h2>🗓️ השבוע הקרוב</h2><a class="link" href="#/t/' + t.id + '/calendar">ללוח השנה</a></div>' +
+      '<p class="hint">' + (edit ? 'לחיצה על יום: לא במאמן כל היום. לחיצה נוספת: רק חצי יום. לחיצה שלישית: ביטול. הפורטנייט יתעדכן לבד.' : 'הימים שבהם ' + esc(t.name) + ' לא ' + G(t, 'נמצא', 'נמצאת', 'נמצא/ת') + ' במאמן.') + '</p>' +
+      '<div class="days">' + days + '</div><p class="legend"><span>א׳–ד׳ = יום שלם</span><span>ה׳ = חצי יום</span><span>ו׳–ש׳ לא נספרים</span></p></section>';
+  }
+
+  function notesCard(t, m) {
+    const msgs = messagesOf(t.id).slice(0, 40), prev = ui.seenPrev[seenKey(m, t.id)] || 0;
+    const up = m.id === t.id, mentor = db.users[t.mentorId];
+    const target = up ? (mentor ? mentor.name : G(mentor, 'החופף', 'החופפת', 'החופף')) : t.name;
+    const colors = ['c1', 'c2', 'c3', 'c4'];
+    const sentToday = msgs.some(x => x.fromId === m.id && iso(new Date(x.at)) === todayISO());
+    const form = canEdit(m, t) ? '<form class="note-form" data-form="note" data-tid="' + t.id + '">' +
+      '<label class="sr" for="note-' + t.id + '" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">המסר היומי</label>' +
+      '<textarea id="note-' + t.id + '" name="text" data-keep maxlength="240" rows="2" placeholder="מה המסר של היום ל' + esc(target) + '?"></textarea>' +
+      '<div class="note-tools">' + colors.map((c, i) => '<label class="swatch" title="צבע"><input type="radio" name="color" value="' + c + '" data-change="noteColor"' + (ui.noteColor === c ? ' checked' : '') + ' aria-label="צבע ' + (i + 1) + '"><span class="sw' + (i + 1) + '"></span></label>').join('') +
+      '<span class="grow"></span>' + ['💛', '🌸', '⭐', '☕', '🎉', '🍀'].map(e => '<button type="button" class="emo" data-act="emoji" data-tid="' + t.id + '" data-e="' + e + '" aria-label="הוספת ' + e + '">' + e + '</button>').join('') +
+      '<button class="btn primary sm">שליחה 💌</button></div></form>' : '';
+    const list = msgs.length ? '<ul class="notes">' + msgs.map(x => '<li class="note ' + esc(x.color || 'c1') + (x.at > prev && x.fromId !== m.id ? ' new' : '') + '">' +
+      '<p>' + esc(x.text) + '</p><div class="by">— ' + esc(userName(x.fromId) || 'מישהו') + ' · ' + ago(x.at) + '</div>' +
+      (x.fromId === m.id || m.role === 'admin' ? '<button class="icon-btn x" data-act="delNote" data-id="' + x.id + '" aria-label="מחיקת המסר">✕</button>' : '') + '</li>').join('') + '</ul>'
+      : '<p class="hint" style="margin:12px 0 0">עוד אין מסרים. מי ישבור את הקרח? 🧊</p>';
+    return '<section class="card"><div class="card-head"><h2>📮 המסר היומי ל' + esc(target) + '</h2>' + (sentToday ? '<span class="badge ok">נשלח היום ✓</span>' : '') + '</div>' + form + list + '</section>';
+  }
+
+  /* ---------- Questions ---------- */
+  function questionsTab(t, m) {
+    const edit = canEdit(m, t), mgr = canManage(m, t), self = m.id === t.id, allQs = questionsOf(t.id), sp = sprintsOf(t.id);
+    const gid = q => (q.sprintId && db.sprints[q.sprintId]) ? q.sprintId : '';
+    /* The checklist shows only the parts that are running now; a part's questions leave it once the part is marked done. */
+    const active = sp.filter(s => s.status === 'active');
+    const qs = allQs.filter(q => active.some(s => s.id === gid(q)));
+    const f = ui.qFilter, count = s => qs.filter(q => q.status === s).length;
+    const done = count('done'), pct = qs.length ? Math.round(done / qs.length * 100) : 0;
+    const filters = [['all', 'הכל', qs.length], ['todo', 'עוד לא התחלתי', count('todo')], ['doing', 'בעבודה', count('doing')], ['done', 'בוצע', done]];
+    const head = '<section class="card"><div class="q-top"><div><h1 style="font-size:1.4rem">✅ ' + (self ? 'הצ׳קליסט שלי' : 'הצ׳קליסט של ' + esc(t.name)) + '</h1>' +
+      '<p class="muted">' + (active.length ? done + ' מתוך ' + qs.length + ' בוצעו · השאלות של ' + (active.length === 1 ? 'החלק שהתחלת' : 'החלקים שהתחלת') + (self ? '' : '') : 'כאן יופיעו השאלות של החלק שמתחילים') + '</p></div>' +
+      (active.length ? '<div class="chips" role="group" aria-label="סינון">' + filters.map(([k, l, c]) => '<button class="chip' + (f === k ? ' on' : '') + '" data-act="qFilter" data-f="' + k + '" aria-pressed="' + (f === k) + '">' + l + ' · ' + c + '</button>').join('') + '</div>' : '') + '</div>' +
+      (active.length ? '<div class="bar big" style="margin-top:14px"><i style="width:' + pct + '%"></i></div>' : '') + '</section>';
+    const next = sp.find(s => s.status === 'todo');
+    const empty = active.length ? '' : '<section class="card empty"><span class="big">' + (next ? '🚀' : sp.length ? '🎓' : '🗺️') + '</span><b>' +
+      (next ? 'אין כרגע חלק פעיל' : sp.length ? 'כל החלקים הושלמו!' : 'אין עדיין חלקים') + '</b>' +
+      (next ? 'כש' + (self ? G(t, 'תתחיל', 'תתחילי', 'תתחיל/י') : 'יתחילו') + ' את "' + esc(next.title) + '" בעמוד <a href="#/t/' + t.id + '/sprints">הפורטנייטים</a>, השאלות שלו יופיעו כאן.' : '') + '</section>';
+    const group = g => {
+      const all = allQs.filter(q => gid(q) === g.id);
+      const shown = g.s && g.s.status === 'active' && f !== 'all' ? all.filter(q => q.status === f) : all;
+      const gd = all.filter(q => q.status === 'done').length;
+      const state = g.s ? sprintState(g.s, sprintInfo(g.s)) : null;
+      return '<section class="card q-group"><div class="q-group-head"><h2>' + esc(g.title) + '</h2>' + (state ? badge(SP_STATUS[state]) : '') +
+        (all.length ? '<span class="muted sm">' + gd + '/' + all.length + '</span><div class="bar"><i style="width:' + Math.round(gd / all.length * 100) + '%"></i></div>' : '') + '</div>' +
+        (shown.length ? '<ul class="qs">' + shown.map(q => qRow(q, m, edit, mgr)).join('') + '</ul>' : '<p class="hint" style="margin:0">' + (all.length ? 'אין כאן שאלות בסינון הזה' : 'עוד אין שאלות בחלק הזה') + '</p>') +
+        (edit ? '<form class="q-add" data-form="qAdd" data-tid="' + t.id + '" data-gid="' + g.id + '"><input type="text" id="qadd-' + t.id + '-' + (g.id || 'gen') + '" name="text" data-keep maxlength="300" placeholder="שאלה חדשה…" aria-label="שאלה חדשה ב' + esc(g.title) + '"><button class="btn soft">הוספה</button>' +
+          (mgr ? '<button type="button" class="btn ghost" data-act="qBulk" data-tid="' + t.id + '" data-gid="' + g.id + '" title="הוספת כמה שאלות בבת אחת">כמה בבת אחת</button>' : '') + '</form>' : '') +
+        '</section>';
+    };
+    let body = active.map(s => group({ id: s.id, title: s.title, s })).join('');
+    if (mgr) {
+      /* Mentors can prepare the questions of the other parts ahead of time; the trainee sees them only once the part starts. */
+      const rest = sp.filter(s => s.status !== 'active').map(s => ({ id: s.id, title: s.title, s }));
+      if (allQs.some(q => !gid(q))) rest.push({ id: '', title: 'שאלות בלי חלק' });
+      if (rest.length) body += '<details class="card q-group"><summary class="link" style="cursor:pointer">שאר החלקים (' + rest.length + ') · הנחפף יראה את השאלות שלהם רק כשיתחיל אותם</summary>' +
+        rest.map(group).join('') + '</details>';
+    }
+    return head + empty + body;
+  }
+  function qRow(q, m, edit, mgr) {
+    const canDel = mgr || q.createdBy === m.id;
+    return '<li class="q q-' + q.status + '">' +
+      '<button class="q-check" data-act="qToggle" data-id="' + q.id + '" ' + (edit ? '' : 'disabled') + ' aria-label="' + (q.status === 'done' ? 'ביטול סימון' : 'סימון כבוצע') + '">' + (q.status === 'done' ? '✓' : '') + '</button>' +
+      '<div class="q-main"><div class="q-text">' + esc(q.text) + '</div>' + (q.note ? '<div class="q-note">💬 ' + esc(q.note) + '</div>' : '') +
+      (q.status === 'done' && q.doneAt ? '<div class="q-meta">בוצע ב-' + fmtShort(q.doneAt) + '</div>' : '') + '</div>' +
+      '<div class="q-actions">' +
+      (edit ? '<button class="chip' + (q.status === 'doing' ? ' on doing' : '') + '" data-act="qStatus" data-s="doing" data-id="' + q.id + '" aria-pressed="' + (q.status === 'doing') + '">◐ ' + qStatus('doing', db.users[q.traineeId])[0] + '</button>' +
+        '<button class="icon-btn" data-act="qNote" data-id="' + q.id + '" title="הערה" aria-label="הערה">💬</button>'
+        : badge(qStatus(q.status, db.users[q.traineeId]))) +
+      (m.id === q.traineeId ? '<button class="icon-btn" data-act="issueNew" data-tid="' + q.traineeId + '" data-about="q:' + q.id + '" title="דיווח על בעיה בשאלה" aria-label="דיווח על בעיה בשאלה">⚑</button>' : '') +
+      (canDel ? '<button class="icon-btn" data-act="qEdit" data-id="' + q.id + '" title="עריכה" aria-label="עריכה">✏️</button><button class="icon-btn" data-act="qDel" data-id="' + q.id + '" title="מחיקה" aria-label="מחיקה">🗑️</button>' : '') +
+      '</div></li>';
+  }
+
+  /* ---------- Issue reports ---------- */
+  function issueSubject(x) {
+    if (x.questionId) { const q = db.questions[x.questionId]; return 'שאלה: ' + (q ? q.text : x.questionText || 'שאלה שנמחקה'); }
+    if (x.sprintId) { const s = db.sprints[x.sprintId]; return 'פורטנייט: ' + (s ? s.title : x.sprintTitle || ''); }
+    return '';
+  }
+  function issuesTab(t, m) {
+    /* A free place to write anything about the onboarding; reports sent with ⚑ from the checklist show which question they are about. Handled reports disappear. */
+    const self = m.id === t.id, mgr = canManage(m, t), open = openIssues(t.id);
+    const mentor = db.users[t.mentorId];
+    const item = x => '<li class="issue">' + (x.questionId || x.sprintId ? '<div class="is-about">' + esc(issueSubject(x)) + '</div>' : '') + '<p>' + esc(x.text) + '</p>' +
+      '<div class="rep-row"><span class="muted sm grow">' + esc(userName(x.fromId)) + ' · ' + ago(x.at) + '</span>' +
+      (mgr ? '<button class="btn soft sm" data-act="issueResolve" data-id="' + x.id + '">טופל ✓</button>' : '') +
+      (x.fromId === m.id || m.role === 'admin' ? '<button class="icon-btn" data-act="issueDel" data-id="' + x.id + '" aria-label="מחיקת הדיווח">🗑️</button>' : '') + '</div></li>';
+    const form = self ? '<form data-form="issue" data-tid="' + t.id + '" style="margin-top:12px">' +
+      '<label class="field"><span>מה תרצו להוסיף?</span><textarea name="text" id="is-text-' + t.id + '" data-keep maxlength="1000" rows="4" placeholder="כל דבר על החפיפה: משהו שלא עובד, לא ברור, חסר, או סתם הערה"></textarea></label>' +
+      '<button class="btn primary">שליחה</button></form>' : '';
+    const head = '<section class="card"><h1 style="font-size:1.4rem">⚑ ' + (self ? 'דיווחים והערות' : 'הדיווחים של ' + esc(t.name)) + '</h1>' +
+      '<p class="hint" style="margin:4px 0 0">' + (self ? G(mentor, 'החופף האישי שלך יראה', 'החופפת האישית שלך תראה', 'החופף האישי שלך יראה') + ' כל מה שנכתב כאן. כשהדיווח מטופל הוא יורד מהרשימה.'
+        : '"טופל" מוריד את הדיווח מהרשימה.') + '</p>' + form + '</section>';
+    const list = '<section class="card"><h2 style="margin-bottom:10px">' + (self ? 'מה שכתבתי' : 'דיווחים פתוחים') + '</h2>' +
+      (open.length ? '<ul class="issues">' + open.map(item).join('') + '</ul>' : '<p class="muted">אין דיווחים פתוחים 🌤️</p>') + '</section>';
+    return head + list;
+  }
+
+  /* ---------- Calendar ---------- */
+  function calendarGrid(key, tid, editable, deadlines) {
+    const today = todayISO(), month = ui.cal[key] || today.slice(0, 7);
+    const [y, mo] = month.split('-').map(Number);
+    const first = new Date(y, mo - 1, 1), daysIn = new Date(y, mo, 0).getDate();
+    const ev = {};
+    if (tid) sprintsOf(tid).forEach(s => {
+      if (!s.startDate) return;
+      const add = (d, c, txt) => { if (d) (ev[d] = ev[d] || []).push({ c, txt }); };
+      add(s.startDate, 'start', '▶ ' + s.title);
+      if (s.status === 'done') add(s.doneDate, 'done', '✓ ' + s.title);
+      else if (deadlines) { const i = sprintInfo(s); add(i.deadline, i.overdue ? 'late' : 'due', '🏁 ' + s.title); }
+    });
+    let cells = DAY_SHORT.map(d => '<div class="cal-dow">' + d + '׳</div>').join('');
+    for (let k = 0; k < first.getDay(); k++) cells += '<div class="cell blank"></div>';
+    let work = 0;
+    for (let n = 1; n <= daysIn; n++) {
+      const d = month + '-' + pad(n), wd = parse(d).getDay(), weekend = wd >= 5, hol = absEntry('_global', d), abs = tid ? absEntry(tid, d) : null;
+      const isHol = !!hol, isAbs = !!abs, fullHol = hol && !hol.half;
+      const v = dayValue(d, tid); work += v;
+      const cls = ['cell', weekend ? 'weekend' : '', isHol ? 'holiday' : '', isAbs ? (abs.half ? 'half' : 'away') : '', !tid && hol && hol.half ? 'half' : '', d === today ? 'today' : ''].join(' ');
+      const clickable = editable && !weekend && (tid ? !fullHol : true);
+      const lbl = isAbs ? absLabel(abs) : isHol ? (hol.note || 'חג') + (hol.half ? ' · חצי יום' : '') : '';
+      const inner = '<span class="c-top"><span class="c-n">' + n + '</span>' + (v ? '<span class="c-v">' + (v === 1 ? 'יום' : '½') + '</span>' : '') + '</span>' +
+        (lbl ? '<span class="c-lbl">' + esc(lbl) + '</span>' : '') + (ev[d] || []).map(e => '<span class="ev ' + e.c + '" title="' + esc(e.txt) + '">' + esc(e.txt) + '</span>').join('');
+      const aria = fmtDate(d) + (lbl ? ', ' + lbl : '');
+      cells += clickable
+        ? '<button class="' + cls + '" data-act="toggleAbs" data-tid="' + key + '" data-date="' + d + '" aria-label="' + esc(aria) + '" aria-pressed="' + (isAbs || (!tid && isHol)) + '">' + inner + '</button>'
+        : '<div class="' + cls + '" aria-label="' + esc(aria) + '">' + inner + '</div>';
+    }
+    return '<section class="card"><div class="cal-head"><h2>' + MONTHS[mo - 1] + ' ' + y + '</h2>' +
+      '<button class="btn ghost sm" data-act="calMove" data-key="' + key + '" data-d="0">היום</button>' +
+      '<button class="icon-btn" data-act="calMove" data-key="' + key + '" data-d="-1" aria-label="החודש הקודם">→</button>' +
+      '<button class="icon-btn" data-act="calMove" data-key="' + key + '" data-d="1" aria-label="החודש הבא">←</button></div>' +
+      '<div class="cal-grid">' + cells + '</div>' +
+      '<p class="legend"><span><i style="background:var(--bad-soft)"></i>לא במאמן</span><span><i style="background:var(--warn-soft)"></i>חצי יום</span><span><i style="background:var(--info-soft)"></i>חג / חופש כללי</span>' +
+      (tid ? '<span><i style="background:var(--accent-soft)"></i>▶ התחלת פורטנייט</span>' + (deadlines ? '<span>🏁 דדליין</span>' : '') + '<span><i style="background:var(--ok-soft)"></i>✓ הסתיים</span>' : '') +
+      '<span>· ' + fmtNum(work) + ' ימי עבודה בחודש</span></p></section>';
+  }
+  function markedList(key, canDel, emptyText) {
+    const today = todayISO(), map = absMap(key);
+    const list = Object.keys(map).filter(d => d >= today).sort();
+    if (!list.length) return '<p class="hint" style="margin:0">' + emptyText + '</p>';
+    return '<ul class="marked">' + list.slice(0, 30).map(d => { const e = absEntry(key, d); return '<li><b class="num">' + fmtDate(d) + '</b><span class="grow muted">' + (e.half ? 'חצי יום' + (e.note ? ' · ' : '') : '') + esc(e.note) + '</span>' +
+      (canDel ? '<button class="icon-btn" data-act="toggleAbs" data-tid="' + key + '" data-date="' + d + '" data-clear="1" aria-label="הסרה">✕</button>' : '') + '</li>'; }).join('') + '</ul>';
+  }
+  function calendarTab(t, m) {
+    const edit = canEdit(m, t);
+    return '<div class="layout"><div class="main-col">' + calendarGrid(t.id, t.id, edit, m.id !== t.id) + '</div><aside class="side-col"><section class="card">' +
+      '<h2 style="margin-bottom:8px">🏖️ ימים מחוץ למאמן</h2>' +
+      (edit ? '<p class="hint">לחיצה על יום בלוח: לא במאמן כל היום. לחיצה נוספת: רק חצי יום. לחיצה שלישית: ביטול. הפורטנייט יתעדכן לבד.</p>' +
+        '<label class="field"><span>סיבה (לא חובה)</span><input type="text" id="absNote-' + t.id + '" data-keep maxlength="40" placeholder="למשל: מילואים, חופשה, קורס"></label>' : '') +
+      '<h3 style="font-size:.95rem;margin:4px 0 8px">הימים הקרובים שסומנו</h3>' + markedList(t.id, edit, 'לא סומנו ימים.') +
+      '</section></aside></div>';
+  }
+  function holidaysView() {
+    return '<div class="page-head"><div><h1>חגים וימי חופש כלליים 🎈</h1><p>ימים שמסומנים כאן לא נספרים באף פורטנייט של אף נחפף.</p></div></div>' +
+      '<div class="layout"><div class="main-col">' + calendarGrid('_global', null, true) + '</div><aside class="side-col"><section class="card">' +
+      '<label class="field"><span>שם היום (לא חובה)</span><input type="text" id="absNote-_global" data-keep maxlength="40" placeholder="למשל: סוכות"></label>' +
+      '<p class="hint">כותבים שם ואז לוחצים על הימים בלוח. לחיצה נוספת הופכת את היום לחצי יום (למשל ערב חג), ולחיצה שלישית מבטלת.</p><h3 style="font-size:.95rem;margin:4px 0 8px">הימים הקרובים</h3>' + markedList('_global', true, 'לא סומנו ימים.') +
+      '</section></aside></div>';
+  }
+
+  /* ---------- Reports ---------- */
+  function reportsView(m) {
+    const allT = visibleTrainees(m);
+    const list = allT.filter(t => inGroup(t, ui.group)).map(t => ({ t, sm: summary(t) }));
+    if (!list.length && allT.length) return '<div class="page-head"><div><h1>דוחות 📊</h1></div></div>' + groupChips(allT) + '<p class="muted">אין נחפפים בקבוצה הזו.</p>';
+    if (!list.length) return '<div class="page-head"><div><h1>דוחות 📊</h1></div></div><div class="card empty"><span class="big">📊</span><b>אין עדיין נתונים</b>כשיהיו נחפפים, הדוחות יופיעו כאן.</div>';
+    const activeCount = list.reduce((a, x) => a + x.sm.active.length, 0);
+    const overdue = [];
+    list.forEach(x => x.sm.overdue.forEach(o => overdue.push({ t: x.t, s: o.s, i: o.i })));
+    const partsDone = list.reduce((a, x) => a + x.sm.done, 0), partsAll = list.reduce((a, x) => a + x.sm.total, 0);
+    const inProg = list.filter(x => x.sm.status !== 'finished').length;
+    const tiles = '<div class="tiles">' +
+      '<div class="card tile"><div class="eyebrow">נחפפים בחפיפה</div><div class="v">' + inProg + '</div></div>' +
+      '<div class="card tile ok"><div class="eyebrow">פורטנייטים פעילים</div><div class="v">' + activeCount + '</div></div>' +
+      '<div class="card tile ' + (overdue.length ? 'bad' : '') + '"><div class="eyebrow">פורטנייטים באיחור עכשיו</div><div class="v">' + overdue.length + '</div></div>' +
+      '<div class="card tile"><div class="eyebrow">חלקים שהושלמו</div><div class="v">' + partsDone + '<span class="muted" style="font-size:1rem;font-weight:500"> / ' + partsAll + '</span></div></div></div>';
+
+    const alerts = [];
+    overdue.forEach(o => alerts.push(['bad', '⏰', '<b>' + esc(o.t.name) + '</b> באיחור בפורטנייט <b>' + esc(o.s.title) + '</b>. ' + (o.i.overBy ? daysText(o.i.overBy) + ' אחרי ' : 'הזמן נגמר ב') + fmtDate(o.i.deadline) + '.']));
+    list.forEach(x => openIssues(x.t.id).forEach(is => alerts.push(['warn', '⚑', '<a href="#/t/' + x.t.id + '/issues"><b>' + esc(x.t.name) + '</b></a> ' + G(x.t, 'דיווח', 'דיווחה', 'דיווח/ה') + ' על בעיה' + (issueSubject(is) ? ' (' + esc(issueSubject(is)) + ')' : '') + ': "' + esc(is.text.length > 90 ? is.text.slice(0, 90) + '…' : is.text) + '"'])));
+    list.forEach(x => { x.sm.infos.forEach(o => { if (o.s.status === 'active' && !o.i.overdue && o.i.deadline === todayISO()) alerts.push(['', '🏁', '<b>' + esc(x.t.name) + '</b>: היום היום האחרון של <b>' + esc(o.s.title) + '</b>.']); }); });
+    list.forEach(x => { if (x.sm.status === 'idle') alerts.push(['', '💤', '<b>' + esc(x.t.name) + '</b> לא באמצע פורטנייט. הבא בתור: ' + esc(x.sm.next ? x.sm.next.title : '') + '.']); });
+    const exts = [];
+    list.forEach(x => x.sm.sp.forEach(s => (s.extensions || []).forEach(e => exts.push({ t: x.t, s, e }))));
+    exts.sort((a, b) => b.e.at - a.e.at);
+    const alertBox = '<section class="card"><h2 style="margin-bottom:12px">🔔 מה דורש תשומת לב</h2>' + (alerts.length
+      ? '<ul class="alerts">' + alerts.map(([c, ic, h]) => '<li class="' + c + '"><span class="ai">' + ic + '</span><span>' + h + '</span></li>').join('') + '</ul>'
+      : '<p class="muted">הכל רגוע. אף אחד לא באיחור 🌤️</p>') + '</section>';
+    const extBox = '<section class="card"><h2 style="margin-bottom:12px">⏳ הארכות אחרונות</h2>' + (exts.length
+      ? '<ul class="alerts">' + exts.slice(0, 8).map(x => '<li><span class="ai">＋</span><span><b>' + esc(x.t.name) + '</b> · ' + esc(x.s.title) + ': ' + daysText(+x.e.days) + '. "' + esc(x.e.reason) + '" <span class="muted">(' + fmtShort(x.e.at) + ')</span></span></li>').join('') + '</ul>'
+      : '<p class="muted">לא ביקשו הארכות.</p>') + '</section>';
+
+    const rows = list.map(({ t, sm }) => {
+      const cur = sm.current;
+      return '<tr><td><a class="tn" href="#/t/' + t.id + '/sprints">' + avatar(t, 'sm') + esc(t.name) + '</a></td>' +
+        (m.role === 'admin' ? '<td class="nw">' + esc(userName(t.mentorId) || '—') + '</td>' : '') +
+        '<td>' + esc(stageText(sm, t)) + '</td>' +
+        '<td class="nw">' + (cur ? '<span style="color:' + (cur.i.overdue ? 'var(--bad)' : 'inherit') + '">' + remainingText(cur.i, cur.s) + '</span>' : '—') + '</td>' +
+        '<td class="nw num">' + sm.done + '/' + sm.total + '</td>' +
+        '<td class="nw num">' + sm.qDone + '/' + sm.qs.length + '</td>' +
+        '<td class="nw num">' + (sm.extDays ? daysText(sm.extDays) : '—') + '</td>' +
+        '<td class="nw num">' + (sm.lateDone ? sm.lateDone : '—') + '</td>' +
+        '<td>' + badge(tStatus(sm.status, t)) + '</td></tr>';
+    }).join('');
+    const table = '<section class="card" style="margin-top:16px"><h2 style="margin-bottom:8px">👀 איפה כל אחד נמצא</h2><div class="tbl-wrap"><table class="tbl"><thead><tr><th>נחפף</th>' +
+      (m.role === 'admin' ? '<th>חופף אישי</th>' : '') + '<th>שלב נוכחי</th><th>זמן בפורטנייט</th><th>חלקים</th><th>שאלות</th><th>הארכות</th><th>חלקים שהסתיימו באיחור</th><th>מצב</th></tr></thead><tbody>' + rows + '</tbody></table></div></section>';
+
+    /* Parts in plan order first, then any extra sprint titles people added. */
+    const titles = planParts().map(p => p.title.trim());
+    list.forEach(x => x.sm.sp.forEach(s => { if (titles.indexOf(s.title.trim()) < 0) titles.push(s.title.trim()); }));
+    const plannedDays = {}; planParts().forEach(p => { plannedDays[p.title.trim()] = p.days; });
+    const mrows = titles.map(title => {
+      const doneUsed = [];
+      const cells = list.map(({ sm }) => {
+        const o = sm.infos.find(x => x.s.title.trim() === title);
+        if (!o) return '<td><span class="mc none">·</span></td>';
+        if (o.s.status === 'done') { doneUsed.push(o.i.used); return '<td><span class="mc ' + (o.i.late ? 'bad' : 'ok') + '" title="בפועל מתוך מוקצב">' + fmtNum(o.i.used) + ' מתוך ' + fmtNum(o.i.total) + '</span></td>'; }
+        if (o.s.status === 'active') return '<td><span class="mc ' + (o.i.overdue ? 'bad' : 'info') + '" title="עד עכשיו מתוך מוקצב">⏳ ' + fmtNum(o.i.used) + ' מתוך ' + fmtNum(o.i.total) + '</span></td>';
+        return '<td><span class="mc none">' + fmtNum(o.i.total) + ' מתוכנן</span></td>';
+      }).join('');
+      const avg = doneUsed.length ? fmtNum(half(doneUsed.reduce((a, b) => a + b, 0) / doneUsed.length)) : '—';
+      return '<tr><td><b>' + esc(title) + '</b>' + (plannedDays[title] != null ? '<div class="muted sm">בתכנית: ' + daysText(plannedDays[title]) + '</div>' : '') + '</td>' + cells + '<td><b class="num">' + avg + '</b></td></tr>';
+    }).join('');
+    const matrix = '<section class="card" style="margin-top:16px"><div class="card-head"><h2>⏱️ כמה זמן לקח כל חלק</h2><button class="btn ghost sm" data-act="exportCsv">הורדה לאקסל</button></div>' +
+      '<p class="hint">ימי עבודה בפועל מתוך הזמן המוקצב (כולל הארכות). ירוק = בזמן, אדום = באיחור, כחול = בעבודה עכשיו.</p>' +
+      (titles.length ? '<div class="tbl-wrap"><table class="tbl mx"><thead><tr><th>חלק</th>' + list.map(x => '<th>' + esc(x.t.name) + '</th>').join('') + '<th>ממוצע</th></tr></thead><tbody>' + mrows + '</tbody></table></div>' : '<p class="muted">אין עדיין פורטנייטים.</p>') + '</section>';
+
+    return '<div class="page-head"><div><h1>דוחות 📊</h1><p>' + (m.role === 'admin' ? 'תמונת מצב של כל הנחפפים' : 'תמונת מצב של הנחפפים שלך') + ', מתעדכן בזמן אמת.</p></div></div>' +
+      groupChips(allT) + tiles + '<div class="two">' + alertBox + extBox + '</div>' + table + matrix;
+  }
+
+  /* ---------- Users (admin) ---------- */
+  function usersView(m) {
+    const all = users(), mentors = all.filter(u => u.role !== 'trainee'), parts = planParts();
+    const mentorOpts = sel => '<option value="">ללא</option>' + mentors.map(u => '<option value="' + u.id + '"' + (sel === u.id ? ' selected' : '') + '>' + esc(u.name) + (u.role === 'admin' ? ' (חופף ראשי)' : '') + '</option>').join('');
+    const firstMentor = (mentors.find(u => u.role === 'mentor') || m).id;
+    const form = '<section class="card"><h2 style="margin-bottom:6px">＋ משתמש חדש</h2><p class="hint">יוצרים לפי שם בלבד. בכניסה הראשונה המשתמש בוחר לעצמו סיסמה.</p>' +
+      '<form class="nu-form" data-form="newUser" autocomplete="off">' +
+      '<label class="field"><span>שם</span><input type="text" name="name" id="nu-name" data-keep required maxlength="40"></label>' +
+      '<div class="field"><span>תפקיד</span><div class="seg" role="radiogroup" aria-label="תפקיד">' +
+      '<label><input type="radio" name="role" value="trainee" id="nu-role-t" data-keep checked><span>נחפף</span></label>' +
+      '<label><input type="radio" name="role" value="mentor" id="nu-role-m" data-keep><span>חופף אישי</span></label></div></div>' +
+      '<div class="field"><span>לשון פנייה</span><div class="seg" role="radiogroup" aria-label="לשון פנייה">' +
+      '<label><input type="radio" name="gender" value="m" id="nu-g-m" data-keep checked><span>זכר</span></label>' +
+      '<label><input type="radio" name="gender" value="f" id="nu-g-f" data-keep><span>נקבה</span></label></div></div>' +
+      '<label class="field trainee-only"><span>חופף אישי</span><select name="mentor" id="nu-mentor" data-keep>' + mentorOpts(firstMentor) + '</select></label>' +
+      (groups().length ? '<label class="field trainee-only"><span>קבוצה</span><select name="group" id="nu-group" data-keep>' + groupOpts(ui.group !== 'all' && ui.group !== 'none' ? ui.group : '') + '</select></label>' : '') +
+      '<label class="field trainee-only"><span>תחילת החפיפה</span><input type="date" name="start" id="nu-start" data-keep value="' + todayISO() + '"></label>' +
+      (parts.length ? '<label class="check field trainee-only full"><input type="checkbox" name="plan" id="nu-plan" data-keep checked><span>להעתיק את תכנית החפיפה (' + parts.length + ' חלקים)</span></label>' : '') +
+      '<div class="full"><button class="btn primary">יצירת משתמש</button></div></form></section>';
+    const row = u => {
+      const kids = u.role !== 'trainee' ? all.filter(x => x.mentorId === u.id).length : 0;
+      return '<tr><td><span class="tn" style="display:inline-flex;align-items:center;gap:8px;font-weight:600">' + avatar(u, 'sm') + esc(u.name) + (u.id === m.id ? ' <span class="badge acc">' + G(m, 'אתה', 'את', 'את/ה') + '</span>' : '') + '</span></td>' +
+        '<td class="nw">' + roleName(u) + '</td>' +
+        '<td><select data-change="setGender" data-id="' + u.id + '" aria-label="לשון פנייה ל' + esc(u.name) + '" style="min-height:36px;padding:4px 8px">' +
+        [['', 'לא צוין'], ['m', 'זכר'], ['f', 'נקבה']].map(([v, l]) => '<option value="' + v + '"' + ((u.gender || '') === v ? ' selected' : '') + '>' + l + '</option>').join('') + '</select></td>' +
+        '<td>' + (u.role === 'trainee' ? '<select data-change="setMentor" data-id="' + u.id + '" aria-label="חופף אישי של ' + esc(u.name) + '" style="min-height:36px;padding:4px 8px">' + mentorOpts(u.mentorId) + '</select>' : (kids ? kids + ' נחפפים' : '—')) + '</td>' +
+        (groups().length ? '<td>' + (u.role === 'trainee' ? '<select data-change="setGroup" data-id="' + u.id + '" aria-label="הקבוצה של ' + esc(u.name) + '" style="min-height:36px;padding:4px 8px">' + groupOpts(u.groupId) + '</select>' : '') + '</td>' : '') +
+        '<td class="nw">' + (hasAccount(u) ? badge(['יש סיסמה', 'ok'])
+          : badge(['מחכה לכניסה ראשונה', 'warn']) + (useCloud ? ' <span class="code-pill" title="הקוד לכניסה הראשונה">קוד: <b class="num">' + esc((pub.invites[u.id] || {}).code || '—') + '</b></span>' : '')) + '</td>' +
+        '<td class="nw"><button class="icon-btn" data-act="renameUser" data-id="' + u.id + '" title="שינוי שם" aria-label="שינוי שם">✏️</button>' +
+        (hasAccount(u) && !(useCloud && u.id === m.id) ? '<button class="icon-btn" data-act="resetPw" data-id="' + u.id + '" title="איפוס סיסמה" aria-label="איפוס סיסמה">🔄</button>' : '') +
+        (u.id !== m.id ? '<button class="icon-btn" data-act="delUser" data-id="' + u.id + '" title="מחיקה" aria-label="מחיקה">🗑️</button>' : '') + '</td></tr>';
+    };
+    const table = '<section class="card"><h2 style="margin-bottom:8px">כל המשתמשים</h2><div class="tbl-wrap"><table class="tbl"><thead><tr><th>שם</th><th>תפקיד</th><th>לשון פנייה</th><th>חופף אישי / נחפפים</th>' + (groups().length ? '<th>קבוצה</th>' : '') + '<th>סיסמה</th><th></th></tr></thead><tbody>' +
+      mentors.concat(all.filter(u => u.role === 'trainee')).map(row).join('') + '</tbody></table></div></section>';
+    const gs = groups();
+    const groupsCard = '<section class="card"><h2 style="margin-bottom:6px">👪 קבוצות (שכבות)</h2><p class="hint">מחלקים את הנחפפים לקבוצות, ואז אפשר לראות כל קבוצה בנפרד בעמודי הנחפפים, הדוחות והנוכחות.</p>' +
+      (gs.length ? '<ul class="marked" style="margin-bottom:12px">' + gs.map(g => '<li><b class="grow">' + esc(g.name) + '</b><span class="muted sm">' + all.filter(u => u.role === 'trainee' && u.groupId === g.id).length + ' נחפפים</span>' +
+        '<button class="icon-btn" data-act="groupRename" data-id="' + g.id + '" aria-label="שינוי שם">✏️</button><button class="icon-btn" data-act="groupDel" data-id="' + g.id + '" aria-label="מחיקה">🗑️</button></li>').join('') + '</ul>' : '') +
+      '<form class="q-add" data-form="groupAdd"><input type="text" name="name" id="grp-name" data-keep maxlength="40" placeholder="למשל: שכבה א׳" aria-label="שם קבוצה חדשה"><button class="btn soft">הוספת קבוצה</button></form></section>';
+    return '<div class="page-head"><div><h1>משתמשים 👥</h1><p>יצירת נחפפים וחופפים אישיים, שיוך ביניהם וחלוקה לקבוצות.</p></div></div>' + form + groupsCard + table;
+  }
+  const groupOpts = sel => '<option value="">בלי קבוצה</option>' + groups().map(g => '<option value="' + g.id + '"' + (sel === g.id ? ' selected' : '') + '>' + esc(g.name) + '</option>').join('');
+
+  /* ---------- Attendance: who is in the office each day, per group ---------- */
+  function attendanceView(m) {
+    const today = todayISO();
+    const thisSun = (() => { const wd = parse(today).getDay(); return addDays(today, wd >= 5 ? 7 - wd : -wd); })();
+    const sun = ui.attWeek || thisSun, days = [0, 1, 2, 3, 4].map(k => addDays(sun, k));
+    const all = visibleTrainees(m), list = all.filter(t => inGroup(t, ui.group));
+    const cell = (t, d) => {
+      const hol = absEntry('_global', d), a = absEntry(t.id, d);
+      if (hol && !hol.half) return '<td class="att hol" title="' + esc(hol.note || 'חג') + '">חג</td>';
+      if (a && !a.half) return '<td class="att away" title="' + esc(a.note || 'לא במאמן') + '">✕ ' + (a.note ? '<span class="att-n">' + esc(a.note) + '</span>' : '') + '</td>';
+      if (a || hol) return '<td class="att half" title="' + esc((a && a.note) || (hol && hol.note) || 'חצי יום') + '">½ ' + (a && a.note ? '<span class="att-n">' + esc(a.note) + '</span>' : '') + '</td>';
+      return '<td class="att in">✓</td>';
+    };
+    const present = (ts, d) => ts.filter(t => dayValue(d, t.id) === baseValue(d) && baseValue(d)).length;
+    const table = (title, ts) => '<section class="card"><div class="card-head"><h2>' + esc(title) + ' <span class="muted sm">' + ts.length + '</span></h2></div><div class="tbl-wrap"><table class="tbl att-tbl"><thead><tr><th>נחפף</th>' +
+      days.map(d => '<th class="' + (d === today ? 'is-today' : '') + '">' + DAY_SHORT[parse(d).getDay()] + '׳ ' + dm(d) + '<div class="muted sm" style="font-weight:500">' + present(ts, d) + '/' + ts.length + ' במאמן</div></th>').join('') + '</tr></thead><tbody>' +
+      ts.map(t => '<tr><td><a class="tn" href="#/t/' + t.id + '/calendar">' + avatar(t, 'sm') + esc(t.name) + '</a></td>' + days.map(d => cell(t, d)).join('') + '</tr>').join('') + '</tbody></table></div></section>';
+    let body;
+    if (!list.length) body = '<div class="card empty"><span class="big">🏢</span><b>אין נחפפים להצגה</b></div>';
+    else if (ui.group === 'all' && groups().length) {
+      body = groups().map(g => [g.name, list.filter(t => t.groupId === g.id)]).concat([['בלי קבוצה', list.filter(t => !groupName(t.groupId))]]).filter(x => x[1].length).map(([n, ts]) => table(n, ts)).join('');
+    } else body = table(ui.group === 'all' ? 'כל הנחפפים' : ui.group === 'none' ? 'בלי קבוצה' : groupName(ui.group), list);
+    return '<div class="page-head"><div><h1>נוכחות במאמן 🏢</h1><p>מי נמצא במשרד בכל יום בשבוע, לפי מה שהנחפפים סימנו.</p></div>' +
+      '<div class="row"><button class="icon-btn" data-act="attWeek" data-d="-7" aria-label="השבוע הקודם">→</button><b class="num">' + dm(days[0]) + ' עד ' + dm(days[4]) + '</b>' +
+      '<button class="icon-btn" data-act="attWeek" data-d="7" aria-label="השבוע הבא">←</button>' + (sun !== thisSun ? '<button class="btn ghost sm" data-act="attWeek" data-d="0">השבוע</button>' : '') + '</div></div>' +
+      groupChips(all) + body + '<p class="legend"><span>✓ במאמן</span><span>½ חצי יום לא במאמן</span><span>✕ לא במאמן</span><span>חג = חופש לכולם</span></p>';
+  }
+
+  /* ---------- Plan template (admin) ---------- */
+  function planView() {
+    const parts = planParts(), sum = parts.reduce((a, p) => a + (+p.days || 0), 0);
+    const list = parts.length ? '<ol class="plan-list">' + parts.map((p, i) => '<li class="plan-item"><span class="sp-num">' + (i + 1) + '</span><div class="grow"><h3>' + esc(p.title) + ' <span class="badge acc">' + daysText(+p.days) + '</span></h3>' +
+      (p.desc ? '<p>' + esc(p.desc) + '</p>' : '') +
+      ((p.questions || []).length ? '<details><summary>' + p.questions.length + ' שאלות</summary><ol>' + p.questions.map(q => '<li>' + esc(q) + '</li>').join('') + '</ol></details>' : '') + '</div>' +
+      '<div class="tools"><button class="icon-btn" data-act="planMove" data-i="' + i + '" data-dir="-1" aria-label="למעלה" ' + (i === 0 ? 'disabled' : '') + '>▲</button>' +
+      '<button class="icon-btn" data-act="planMove" data-i="' + i + '" data-dir="1" aria-label="למטה" ' + (i === parts.length - 1 ? 'disabled' : '') + '>▼</button>' +
+      '<button class="icon-btn" data-act="planEdit" data-i="' + i + '" aria-label="עריכה">✏️</button><button class="icon-btn" data-act="planDel" data-i="' + i + '" aria-label="מחיקה">🗑️</button></div></li>').join('') + '</ol>'
+      : '<div class="empty"><span class="big">🧭</span><b>עוד אין חלקים בתכנית</b>מוסיפים את החלקים של החפיפה, כמה ימים מוקצבים לכל אחד ואילו שאלות יש בו.</div>';
+    return '<div class="page-head"><div><h1>תכנית החפיפה 🧭</h1><p>החלקים שכל נחפף חדש מקבל. השאלות של כל חלק מופיעות בצ׳קליסט של הנחפף כשהוא מתחיל את החלק, ונעלמות כשהוא מסמן שסיים.</p></div>' +
+      '<div class="row"><button class="btn ghost" data-act="planApply"' + (parts.length ? '' : ' disabled') + '>העתקה לנחפף קיים</button><button class="btn primary" data-act="planEdit" data-i="-1">＋ חלק חדש</button></div></div>' +
+      '<section class="card">' + (parts.length ? '<p class="hint">' + parts.length + ' חלקים · סה״כ ' + daysText(sum) + ' עבודה</p>' : '') + list + '</section>';
+  }
+
+  /* ================= Dialogs ================= */
+  const dlg = $('dlg');
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+  function openDialog(o) {
+    dlg.innerHTML = '<form class="dlg-form" novalidate><h2 id="dlgTitle">' + o.title + '</h2>' + (o.body || '') +
+      '<p class="err" id="dlgErr"></p><div class="dlg-actions"><button class="btn ' + (o.danger ? 'danger' : 'primary') + '">' + (o.ok || 'שמירה') + '</button>' +
+      '<button type="button" class="btn ghost" data-close>ביטול</button></div></form>';
+    const f = dlg.querySelector('form');
+    f.querySelector('[data-close]').onclick = () => dlg.close();
+    f.onsubmit = e => {
+      e.preventDefault();
+      const res = o.onOk(f);
+      if (typeof res === 'string') { $('dlgErr').textContent = res; return; }
+      dlg.close();
+    };
+    dlg.showModal();
+    if (o.onOpen) o.onOpen(f);
+    const first = f.querySelector('input:not([type=hidden]), textarea, select');
+    if (first) first.focus();
+  }
+  function confirmDlg(title, text, ok, fn) { openDialog({ title, body: '<p>' + text + '</p>', ok, danger: true, onOk: () => { fn(); } }); }
+  const fv = (f, n) => { const el = f.elements.namedItem(n); return el ? String(el.value).trim() : ''; };
+  const dateField = (name, label, val, extra) => '<label class="field"><span>' + label + '</span><input type="date" name="' + name + '" value="' + (val || '') + '" ' + (extra || '') + '></label>';
+  const daysField = (name, label, val, hint) => '<label class="field"><span>' + label + '</span><input type="number" name="' + name + '" min="0.5" step="0.5" value="' + (val == null ? '' : val) + '" inputmode="decimal">' + (hint ? '<small>' + hint + '</small>' : '') + '</label>';
+  function readDays(f, name) { const v = parseFloat(fv(f, name).replace(',', '.')); return isFinite(v) && v > 0 ? half(v) : null; }
+
+  function sprintDialog(s, tid) {
+    const m = me(), t = db.users[tid], mgr = canManage(m, t);
+    const isNew = !s;
+    const daysEditable = isNew || mgr || s.status === 'todo';
+    let body = '<label class="field"><span>שם החלק</span><input type="text" name="title" maxlength="80" value="' + esc(s ? s.title : '') + '"></label>' +
+      (daysEditable ? daysField('days', 'ימים מוקצבים', s ? s.days : 1, 'א׳–ד׳ נחשבים יום, ה׳ חצי יום. ' + (s && extTotal(s) ? 'ההארכות (' + daysText(extTotal(s)) + ') נוספות על זה.' : '')) : '') +
+      '<label class="field"><span>תיאור (לא חובה)</span><textarea name="desc" maxlength="500">' + esc(s ? s.desc || '' : '') + '</textarea></label>';
+    if (!isNew && mgr) {
+      body += '<label class="field"><span>מצב</span><select name="status">' + [['todo', 'טרם התחיל'], ['active', 'בעבודה'], ['done', 'הושלם']].map(([k, l]) => '<option value="' + k + '"' + (s.status === k ? ' selected' : '') + '>' + l + '</option>').join('') + '</select></label>' +
+        '<div class="grid2">' + dateField('start', 'תאריך התחלה', s.startDate) + dateField('done', 'תאריך סיום', s.doneDate) + '</div>';
+    }
+    openDialog({
+      title: isNew ? 'פורטנייט חדש ✨' : 'עריכת פורטנייט', ok: isNew ? 'הוספה' : 'שמירה', body,
+      onOk: f => {
+        const title = fv(f, 'title');
+        if (!title) return 'צריך לתת שם לחלק';
+        let days = s ? s.days : 1;
+        if (daysEditable) { days = readDays(f, 'days'); if (days == null) return 'מספר הימים צריך להיות לפחות חצי יום'; }
+        if (isNew) {
+          const order = sprintsOf(tid).reduce((a, x) => Math.max(a, x.order || 0), 0) + 1;
+          put('sprints', { id: uid(), traineeId: tid, title, desc: fv(f, 'desc'), days, status: 'todo', extensions: [], order, createdBy: m.id, createdAt: Date.now() });
+          toast('הפורטנייט נוסף 🌱');
+          return;
+        }
+        const n = Object.assign({}, s, { title, desc: fv(f, 'desc'), days });
+        if (mgr) {
+          n.status = fv(f, 'status');
+          n.startDate = fv(f, 'start') || null; n.doneDate = fv(f, 'done') || null;
+          if (n.status !== 'todo' && !n.startDate) n.startDate = todayISO();
+          if (n.status === 'done' && !n.doneDate) n.doneDate = todayISO();
+          if (n.status !== 'done') n.doneDate = null;
+          if (n.status === 'todo') n.startDate = null;
+          if (n.status !== 'todo' && s.status === 'todo') { copyPlanQuestions(n); n.qCopied = true; }
+          if (n.doneDate && n.startDate && n.doneDate < n.startDate) return 'תאריך הסיום לפני תאריך ההתחלה';
+        }
+        put('sprints', n); toast('נשמר');
+      }
+    });
+  }
+
+  function previewDeadline(f, make) {
+    const out = f.querySelector('.dlg-prev');
+    const upd = () => {
+      const s = make(f);
+      if (!s) { out.textContent = ''; return; }
+      const d = deadlineOf(s);
+      out.textContent = d ? 'לפי ימי העבודה שלך, צריך לסיים עד ' + fmtDate(d) + ' 🏁' : '';
+    };
+    f.addEventListener('input', upd); upd();
+  }
+
+  /* ================= Actions ================= */
+  function confetti() {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const fx = $('fx'), em = ['🎉', '✨', '🌟', '💜', '🎊', '🌱', '💛'];
+    for (let i = 0; i < 30; i++) {
+      const s = document.createElement('span');
+      s.textContent = em[i % em.length];
+      s.style.left = (Math.random() * 100) + 'vw';
+      s.style.animationDelay = (Math.random() * .5) + 's';
+      s.style.setProperty('--x', (Math.random() * 160 - 80) + 'px');
+      s.style.setProperty('--r', (Math.random() * 720 - 360) + 'deg');
+      fx.appendChild(s); setTimeout(() => s.remove(), 2800);
+    }
+  }
+
+  function applyPlan(tid) {
+    const m = me(), sp = sprintsOf(tid), have = new Set(sp.map(s => s.title.trim()));
+    let order = sp.reduce((a, s) => Math.max(a, s.order || 0), 0), added = 0;
+    const now = Date.now();
+    planParts().forEach(p => {
+      if (have.has(p.title.trim())) return;
+      const sid = uid();
+      put('sprints', { id: sid, traineeId: tid, title: p.title, desc: p.desc || '', days: +p.days || 1, status: 'todo', extensions: [], order: ++order, createdBy: m.id, createdAt: now + added, fromPlan: true, planId: p.id });
+      added++;
+    });
+    return added;
+  }
+  /* A plan part's questions are copied when the part starts, so the trainee gets the plan as it is at that moment. */
+  function copyPlanQuestions(s) {
+    if (!s.planId || s.qCopied) return 0;
+    const p = planParts().find(x => x.id === s.planId);
+    const have = new Set(questionsOf(s.traineeId).filter(q => q.sprintId === s.id).map(q => q.text.trim()));
+    const now = Date.now(), list = ((p && p.questions) || []).filter(q => !have.has(q.trim()));
+    list.forEach((text, qi) => put('questions', { id: uid(), traineeId: s.traineeId, sprintId: s.id, text, status: 'todo', note: '', createdBy: me().id, createdAt: now + qi, order: qi, fromPlan: true }));
+    return list.length;
+  }
+
+  /* about: '' for the whole onboarding, 's:<sprint id>' or 'q:<question id>'; titles are kept so the report still reads well if the item is deleted. */
+  function addIssue(tid, about, text) {
+    const x = { id: uid(), traineeId: tid, fromId: me().id, text, status: 'open', at: Date.now() };
+    if (about.startsWith('q:')) { const q = db.questions[about.slice(2)]; if (q) { x.questionId = q.id; x.questionText = q.text; x.sprintId = q.sprintId || null; } }
+    else if (about.startsWith('s:')) { const s = db.sprints[about.slice(2)]; if (s) { x.sprintId = s.id; x.sprintTitle = s.title; } }
+    put('issues', x);
+    const t = db.users[tid], mentor = t && db.users[t.mentorId];
+    toast('הדיווח נשלח. ' + G(mentor, 'החופף האישי שלך יראה', 'החופפת האישית שלך תראה', 'החופף האישי שלך יראה') + ' אותו ⚑');
+  }
+  function beginSprint(s, d) {
+    const nq = copyPlanQuestions(s);
+    put('sprints', Object.assign({}, s, { status: 'active', startDate: d, doneDate: null, qCopied: true }));
+    return nq;
+  }
+  /* Absence cycle on a work day: in the office → away all day → away half a day → in the office. Thursday is already half, so it skips the half step. */
+  function cycleAbsence(key, d, note) {
+    const cur = db.absences[key], doc = { id: key, days: Object.assign({}, cur && cur.days) }, e = absEntry(key, d);
+    if (!e) doc.days[d] = { half: false, note };
+    else if (!e.half && baseValue(d) === 1) doc.days[d] = { half: true, note: e.note };
+    else delete doc.days[d];
+    put('absences', doc);
+  }
+
+  function deleteUserCascade(u) {
+    Object.values(db.issues).filter(x => x.traineeId === u.id).forEach(x => del('issues', x.id));
+    Object.values(db.talks).filter(x => x.traineeId === u.id || x.mentorId === u.id).forEach(x => del('talks', x.id));
+    Object.values(db.sprints).filter(x => x.traineeId === u.id).forEach(x => del('sprints', x.id));
+    Object.values(db.questions).filter(x => x.traineeId === u.id).forEach(x => del('questions', x.id));
+    Object.values(db.messages).filter(x => x.traineeId === u.id).forEach(x => del('messages', x.id));
+    if (db.absences[u.id]) del('absences', u.id);
+    Object.values(db.users).filter(x => x.mentorId === u.id).forEach(x => put('users', Object.assign({}, x, { mentorId: null })));
+    del('users', u.id);
+    if (useCloud) { pubDel('names', u.id); pubDel('claims', u.id); pubDel('invites', u.id); }
+  }
+
+  const ACT = {
+    logout() {
+      ui.loginId = null; ui.loginErr = ''; ui.seenPrev = {}; location.hash = '';
+      if (useCloud && fb) { fb.am.signOut(fb.au); return; }
+      lsDel(LS_SESSION); render();
+    },
+    changePw() {
+      openDialog({
+        title: '🔑 שינוי סיסמה', ok: 'שמירה',
+        body: '<label class="field"><span>הסיסמה הנוכחית</span><input type="password" name="cur" autocomplete="current-password"></label>' +
+          '<label class="field"><span>סיסמה חדשה</span><input type="password" name="pw" autocomplete="new-password"><small>לפחות ' + PW_MIN + ' תווים</small></label>' +
+          '<label class="field"><span>שוב את הסיסמה החדשה</span><input type="password" name="pw2" autocomplete="new-password"></label>',
+        onOk: f => {
+          const cur = f.elements.cur.value, pw = f.elements.pw.value;
+          if (pw.length < PW_MIN) return 'הסיסמה צריכה להיות לפחות ' + PW_MIN + ' תווים';
+          if (pw !== f.elements.pw2.value) return 'הסיסמאות לא זהות';
+          const { am, au } = fb, user = au.currentUser;
+          am.reauthenticateWithCredential(user, am.EmailAuthProvider.credential(user.email, cur))
+            .then(() => am.updatePassword(user, pw))
+            .then(() => toast('הסיסמה עודכנה 🔑'), e => toast(authError(e)));
+        }
+      });
+    },
+    loginPick(el) {
+      if (DEMO) { lsSet(LS_SESSION, el.dataset.id); location.hash = '#/'; render(); return; }
+      ui.loginId = el.dataset.id; ui.loginErr = ''; render(); const p = $('lg-pw'); if (p) p.focus(); },
+    loginBack() { ui.loginId = null; ui.loginErr = ''; render(); },
+
+    addSprint(el) { const t = db.users[el.dataset.tid]; if (t && canManage(me(), t)) sprintDialog(null, t.id); },
+    editSprint(el) { const s = db.sprints[el.dataset.id]; if (s && canManage(me(), db.users[s.traineeId])) sprintDialog(s, s.traineeId); },
+    startSprint(el) {
+      const s = db.sprints[el.dataset.id]; if (!s) return;
+      const m = me(), mgr = canManage(m, db.users[s.traineeId]);
+      /* A trainee may only pick up the next part when nothing is running. */
+      if (!mgr && (m.id !== s.traineeId || sprintsOf(s.traineeId).some(x => x.status === 'active'))) return;
+      openDialog({
+        title: '▶ מתחילים את "' + esc(s.title) + '"', ok: 'יאללה, מתחילים!',
+        body: (mgr ? '<p class="muted" style="margin-bottom:12px">מוקצבים ' + daysText(totalDays(s)) + '. הימים שהנחפף סימן שלא יהיה במאמן לא נספרים.</p>' : '<p class="muted" style="margin-bottom:12px">השאלות של החלק הזה יופיעו בצ׳קליסט שלך.</p>') +
+          dateField('start', 'תאריך התחלה', todayISO()) + (mgr ? '<div class="dlg-prev"></div>' : ''),
+        onOpen: f => { if (mgr) previewDeadline(f, f => { const d = fv(f, 'start'); return d ? Object.assign({}, s, { startDate: d }) : null; }); },
+        onOk: f => {
+          const d = fv(f, 'start'); if (!d) return 'צריך לבחור תאריך';
+          const nq = beginSprint(s, d);
+          toast('בהצלחה! 💪' + (nq ? ' ' + nq + ' שאלות מחכות בצ׳קליסט' : ''));
+        }
+      });
+    },
+    extendSprint(el) {
+      const s = db.sprints[el.dataset.id]; if (!s || !canManage(me(), db.users[s.traineeId])) return;
+      const i = sprintInfo(s);
+      openDialog({
+        title: '⏳ הארכה ל"' + esc(s.title) + '"', ok: 'הוספת הארכה',
+        body: '<p class="muted" style="margin-bottom:12px">עכשיו מוקצבים ' + daysText(i.total) + (i.deadline ? ', עד ' + fmtDate(i.deadline) : '') + '.</p>' +
+          daysField('days', 'כמה ימים להוסיף?', 1, 'אפשר גם חצי יום (0.5)') +
+          '<label class="field"><span>למה צריך הארכה?</span><textarea name="reason" maxlength="300" placeholder="למשל: החלק היה ארוך ממה שחשבנו, הייתי צריך עזרה ב..."></textarea></label><div class="dlg-prev"></div>',
+        onOpen: f => previewDeadline(f, f => { const d = readDays(f, 'days'); return d && s.startDate ? Object.assign({}, s, { extensions: (s.extensions || []).concat([{ days: d }]) }) : null; }),
+        onOk: f => {
+          const d = readDays(f, 'days'); if (d == null) return 'צריך לפחות חצי יום';
+          const reason = fv(f, 'reason'); if (!reason) return 'כתבו במילים למה צריך את ההארכה';
+          put('sprints', Object.assign({}, s, { extensions: (s.extensions || []).concat([{ days: d, reason, by: me().id, at: Date.now() }]) }));
+          toast('נוספו ' + daysText(d) + ' ⏳');
+        }
+      });
+    },
+    finishSprint(el) {
+      const s = db.sprints[el.dataset.id]; if (!s) return;
+      openDialog({
+        title: '🎉 סיימת את "' + esc(s.title) + '"?', ok: 'כן, סיימתי!',
+        body: dateField('done', 'תאריך סיום', todayISO(), 'min="' + s.startDate + '"'),
+        onOk: f => {
+          const d = fv(f, 'done'); if (!d) return 'צריך לבחור תאריך';
+          if (d < s.startDate) return 'תאריך הסיום לפני ההתחלה';
+          put('sprints', Object.assign({}, s, { status: 'done', doneDate: d }));
+          /* Finishing a part hands over the next one straight away, unless another part is still running. */
+          const list = sprintsOf(s.traineeId);
+          const next = list.some(x => x.status === 'active' && x.id !== s.id) ? null : list.find(x => x.status === 'todo');
+          if (next) beginSprint(next, d);
+          confetti(); toast('כל הכבוד! 🎉' + (next ? ' הפורטנייט הבא התחיל: ' + next.title : ''));
+        }
+      });
+    },
+    reopenSprint(el) {
+      const s = db.sprints[el.dataset.id]; if (!s) return;
+      confirmDlg('פתיחה מחדש', 'להחזיר את "' + esc(s.title) + '" למצב "בעבודה"?', 'פתיחה מחדש', () => put('sprints', Object.assign({}, s, { status: 'active', doneDate: null })));
+    },
+    delSprint(el) {
+      const s = db.sprints[el.dataset.id]; if (!s) return;
+      const qs = Object.values(db.questions).filter(q => q.sprintId === s.id);
+      confirmDlg('מחיקת פורטנייט', 'למחוק את "' + esc(s.title) + '"' + (qs.length ? ' ואת ' + qs.length + ' השאלות שבו' : '') + '? אי אפשר לבטל.', 'מחיקה', () => {
+        qs.forEach(q => del('questions', q.id)); del('sprints', s.id); toast('נמחק');
+      });
+    },
+    moveSprint(el) {
+      const s = db.sprints[el.dataset.id]; if (!s) return;
+      /* Swap with the nearest part in the same section (running, finished or upcoming). */
+      const list = sprintsOf(s.traineeId), i = list.findIndex(x => x.id === s.id), dir = +el.dataset.dir;
+      let j = i + dir;
+      while (j >= 0 && j < list.length && list[j].status !== s.status) j += dir;
+      if (j < 0 || j >= list.length) return;
+      [list[i], list[j]] = [list[j], list[i]];
+      list.forEach((x, k) => { if (x.order !== k + 1) put('sprints', Object.assign({}, x, { order: k + 1 })); });
+    },
+    applyPlan(el) {
+      const tid = el.dataset.tid;
+      confirmDlg('טעינה מתכנית החפיפה', 'יתווספו לנחפף החלקים מתכנית החפיפה שעוד אין לו (לפי שם החלק), יחד עם השאלות שלהם.', 'טעינה', () => {
+        const n = applyPlan(tid); toast(n ? 'נוספו ' + n + ' חלקים' : 'כל החלקים כבר קיימים');
+      });
+    },
+
+    toggleAbs(el) {
+      const key = el.dataset.tid, d = el.dataset.date;
+      if (el.dataset.clear) { const doc = { id: key, days: Object.assign({}, absMap(key)) }; delete doc.days[d]; put('absences', doc); return; }
+      const inp = $('absNote-' + key);
+      cycleAbsence(key, d, inp ? inp.value.trim() : '');
+    },
+    pickGroup(el) { ui.group = el.dataset.g; render(); },
+    attWeek(el) {
+      const step = +el.dataset.d;
+      if (!step) { ui.attWeek = null; render(); return; }
+      const wd = parse(todayISO()).getDay(), base = ui.attWeek || addDays(todayISO(), wd >= 5 ? 7 - wd : -wd);
+      ui.attWeek = addDays(base, step); render();
+    },
+
+    talkEdit(el) {
+      const m = me(), k = el.dataset.id ? db.talks[el.dataset.id] : null;
+      const ts = visibleTrainees(m);
+      if (!ts.length) { toast('אין נחפפים לקבוע איתם שיחה'); return; }
+      openDialog({
+        title: k ? 'עריכת שיחה אישית' : '🗓️ שיחה אישית חדשה', ok: k ? 'שמירה' : 'קביעה',
+        body: '<label class="field"><span>עם מי?</span><select name="tid">' + ts.map(t => '<option value="' + t.id + '"' + (k && k.traineeId === t.id ? ' selected' : '') + '>' + esc(t.name) + '</option>').join('') + '</select></label>' +
+          '<div class="grid2">' + dateField('date', 'תאריך', k ? k.date : todayISO()) + '<label class="field"><span>שעה</span><input type="time" name="time" value="' + esc(k ? k.time || '' : '') + '"></label></div>' +
+          '<label class="field"><span>חוזרת?</span><select name="repeat">' + [0, 7, 14].map(r => '<option value="' + r + '"' + ((k ? k.repeat || 0 : 0) === r ? ' selected' : '') + '>' + REPEAT[r] + '</option>').join('') + '</select></label>' +
+          '<label class="field"><span>נושא (לא חובה)</span><input type="text" name="note" maxlength="80" value="' + esc(k ? k.note || '' : '') + '" placeholder="למשל: סיכום חודש ראשון"></label>',
+        onOk: f => {
+          const date = fv(f, 'date'); if (!date) return 'צריך תאריך';
+          put('talks', Object.assign({}, k || { id: uid(), mentorId: m.id, createdAt: Date.now() }, { traineeId: fv(f, 'tid'), date, time: fv(f, 'time'), repeat: +fv(f, 'repeat') || 0, note: fv(f, 'note') }));
+          toast('השיחה נקבעה 🗓️');
+        }
+      });
+    },
+    talkDel(el) {
+      const k = db.talks[el.dataset.id]; if (!k) return;
+      confirmDlg('מחיקת שיחה', 'למחוק את השיחה עם ' + esc(userName(k.traineeId)) + (k.repeat ? ' (כולל כל הפעמים הבאות)' : '') + '?', 'מחיקה', () => del('talks', k.id));
+    },
+
+    /* data-about: '' = the whole onboarding, 's:<id>' = a fortnight, 'q:<id>' = a question. */
+    issueNew(el) {
+      const tid = el.dataset.tid, about = el.dataset.about || '';
+      const q = about.startsWith('q:') ? db.questions[about.slice(2)] : null, s = about.startsWith('s:') ? db.sprints[about.slice(2)] : null;
+      const what = q ? 'השאלה: ' + q.text : s ? 'הפורטנייט: ' + s.title : 'החפיפה כולה';
+      openDialog({
+        title: '⚑ דיווח על בעיה', ok: 'שליחה', body: '<p class="muted" style="margin-bottom:12px">' + esc(what) + '</p><label class="field"><span>מה הבעיה?</span><textarea name="text" maxlength="1000" rows="4" placeholder="למשל: הקישור לא עובד, אין לי הרשאה, לא ברור מה צריך לעשות..."></textarea></label>',
+        onOk: f => { const text = fv(f, 'text'); if (!text) return 'כתבו מה הבעיה'; addIssue(tid, about, text); }
+      });
+    },
+    issueResolve(el) {
+      const x = db.issues[el.dataset.id]; if (!x) return;
+      put('issues', Object.assign({}, x, { status: 'resolved', resolvedBy: me().id, resolvedAt: Date.now() }));
+      toast('הדיווח טופל ✓');
+    },
+    issueDel(el) {
+      const x = db.issues[el.dataset.id]; if (!x) return;
+      confirmDlg('מחיקת דיווח', 'למחוק את הדיווח?', 'מחיקה', () => del('issues', x.id));
+    },
+
+    groupRename(el) {
+      const list = groups().slice(), g = list.find(x => x.id === el.dataset.id); if (!g) return;
+      openDialog({
+        title: 'שינוי שם קבוצה', body: '<label class="field"><span>שם</span><input type="text" name="name" maxlength="40" value="' + esc(g.name) + '"></label>',
+        onOk: f => { const name = fv(f, 'name'); if (!name) return 'צריך שם'; put('settings', { id: 'groups', list: list.map(x => x.id === g.id ? Object.assign({}, x, { name }) : x) }); }
+      });
+    },
+    groupDel(el) {
+      const list = groups(), g = list.find(x => x.id === el.dataset.id); if (!g) return;
+      confirmDlg('מחיקת קבוצה', 'למחוק את "' + esc(g.name) + '"? הנחפפים שבה יישארו בלי קבוצה.', 'מחיקה', () => {
+        put('settings', { id: 'groups', list: list.filter(x => x.id !== g.id) });
+        trainees().filter(t => t.groupId === g.id).forEach(t => put('users', Object.assign({}, t, { groupId: null })));
+        if (ui.group === g.id) ui.group = 'all';
+      });
+    },
+    calMove(el) {
+      const key = el.dataset.key, step = +el.dataset.d;
+      if (!step) { delete ui.cal[key]; render(); return; }
+      const cur = ui.cal[key] || todayISO().slice(0, 7);
+      const [y, m] = cur.split('-').map(Number), d = new Date(y, m - 1 + step, 1);
+      ui.cal[key] = d.getFullYear() + '-' + pad(d.getMonth() + 1); render();
+    },
+
+    emoji(el) {
+      const ta = $('note-' + el.dataset.tid); if (!ta) return;
+      const s = ta.selectionStart != null ? ta.selectionStart : ta.value.length, e = ta.selectionEnd != null ? ta.selectionEnd : s;
+      ta.value = ta.value.slice(0, s) + el.dataset.e + ta.value.slice(e);
+      ta.focus(); ta.setSelectionRange(s + el.dataset.e.length, s + el.dataset.e.length);
+    },
+    delNote(el) { del('messages', el.dataset.id); },
+
+    qFilter(el) { ui.qFilter = el.dataset.f; render(); },
+    qToggle(el) {
+      const q = db.questions[el.dataset.id]; if (!q) return;
+      const done = q.status !== 'done';
+      put('questions', Object.assign({}, q, { status: done ? 'done' : 'todo', doneAt: done ? Date.now() : null, updatedAt: Date.now() }));
+      if (done) {
+        const rest = questionsOf(q.traineeId).filter(x => x.sprintId === q.sprintId && x.status !== 'done' && x.id !== q.id).length;
+        if (!rest && q.sprintId) { confetti(); toast('כל השאלות בחלק הזה בוצעו! 🌟'); }
+      }
+    },
+    qStatus(el) {
+      const q = db.questions[el.dataset.id]; if (!q) return;
+      const s = q.status === el.dataset.s ? 'todo' : el.dataset.s;
+      put('questions', Object.assign({}, q, { status: s, doneAt: null, updatedAt: Date.now() }));
+    },
+    qNote(el) {
+      const q = db.questions[el.dataset.id]; if (!q) return;
+      openDialog({
+        title: '💬 הערה לשאלה', body: '<p class="muted" style="margin-bottom:12px">' + esc(q.text) + '</p><label class="field"><span>הערה</span><textarea name="note" maxlength="500" placeholder="למשל: איפה נתקעתי, קישור, תשובה...">' + esc(q.note || '') + '</textarea></label>',
+        onOk: f => { put('questions', Object.assign({}, q, { note: fv(f, 'note'), updatedAt: Date.now() })); }
+      });
+    },
+    qEdit(el) {
+      const q = db.questions[el.dataset.id]; if (!q) return;
+      const opts = '<option value="">שאלות כלליות</option>' + sprintsOf(q.traineeId).map(s => '<option value="' + s.id + '"' + (q.sprintId === s.id ? ' selected' : '') + '>' + esc(s.title) + '</option>').join('');
+      openDialog({
+        title: 'עריכת שאלה', body: '<label class="field"><span>השאלה</span><textarea name="text" maxlength="300">' + esc(q.text) + '</textarea></label><label class="field"><span>שייכת לחלק</span><select name="sprint">' + opts + '</select></label>',
+        onOk: f => { const text = fv(f, 'text'); if (!text) return 'השאלה ריקה'; put('questions', Object.assign({}, q, { text, sprintId: fv(f, 'sprint') || null })); }
+      });
+    },
+    qDel(el) {
+      const q = db.questions[el.dataset.id]; if (!q) return;
+      confirmDlg('מחיקת שאלה', 'למחוק את השאלה "' + esc(q.text) + '"?', 'מחיקה', () => del('questions', q.id));
+    },
+    qBulk(el) {
+      const tid = el.dataset.tid, gid = el.dataset.gid || null;
+      openDialog({
+        title: 'הוספת כמה שאלות', ok: 'הוספה', body: '<label class="field"><span>שאלה בכל שורה</span><textarea name="lines" rows="8"></textarea></label>',
+        onOk: f => {
+          const lines = fv(f, 'lines').split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+          if (!lines.length) return 'לא נכתבו שאלות';
+          const now = Date.now();
+          lines.forEach((text, k) => put('questions', { id: uid(), traineeId: tid, sprintId: gid, text, status: 'todo', note: '', createdBy: me().id, createdAt: now + k, order: now + k }));
+          toast('נוספו ' + lines.length + ' שאלות');
+        }
+      });
+    },
+
+    renameUser(el) {
+      const u = db.users[el.dataset.id]; if (!u) return;
+      openDialog({
+        title: 'שינוי שם', body: '<label class="field"><span>שם</span><input type="text" name="name" maxlength="40" value="' + esc(u.name) + '"></label>',
+        onOk: f => {
+          const name = fv(f, 'name'); if (!name) return 'צריך שם'; if (nameTaken(name, u.id)) return 'כבר יש משתמש בשם הזה';
+          put('users', Object.assign({}, u, { name }));
+          if (useCloud) { const n = pub.names[u.id] || {}; pubSet('names', u.id, { name, gen: n.gen || 0, gender: u.gender || null }); }
+        }
+      });
+    },
+    resetPw(el) {
+      const u = db.users[el.dataset.id]; if (!u) return;
+      confirmDlg('איפוס סיסמה', 'בכניסה הבאה ' + esc(u.name) + ' ' + G(u, 'יבחר', 'תבחר', 'יבחר/תבחר') + ' סיסמה חדשה' + (useCloud ? ' עם קוד חדש שיופיע כאן' : '') + '. להמשיך?', 'איפוס', () => {
+        if (useCloud) {
+          /* A new generation means a brand-new account; the old one can no longer read anything. */
+          const n = pub.names[u.id] || { name: u.name, gen: 0 };
+          pubSet('names', u.id, { name: n.name, gen: (n.gen || 0) + 1, gender: u.gender || null });
+          pubDel('claims', u.id);
+          pubSet('invites', u.id, { code: newCode() });
+        } else put('users', Object.assign({}, u, { passHash: null, salt: null }));
+        toast('הסיסמה אופסה' + (useCloud ? '. הקוד החדש מופיע בטבלה' : ''));
+      });
+    },
+    delUser(el) {
+      const u = db.users[el.dataset.id]; if (!u) return;
+      const text = u.role === 'trainee' ? 'למחוק את ' + esc(u.name) + ' יחד עם כל הפורטנייטים, השאלות והפתקים שלו? אי אפשר לבטל.' : 'למחוק את ' + esc(u.name) + '? הנחפפים שלו יישארו בלי חופף אישי.';
+      confirmDlg('מחיקת משתמש', text, 'מחיקה', () => { deleteUserCascade(u); toast('נמחק'); });
+    },
+
+    planEdit(el) {
+      const parts = planParts().slice(), i = +el.dataset.i, p = parts[i];
+      openDialog({
+        title: p ? 'עריכת חלק' : 'חלק חדש בתכנית', ok: p ? 'שמירה' : 'הוספה',
+        body: '<label class="field"><span>שם החלק</span><input type="text" name="title" maxlength="80" value="' + esc(p ? p.title : '') + '"></label>' +
+          daysField('days', 'ימים מוקצבים', p ? p.days : 1, 'א׳–ד׳ נחשבים יום, ה׳ חצי יום') +
+          '<label class="field"><span>תיאור (לא חובה)</span><textarea name="desc" maxlength="500">' + esc(p ? p.desc || '' : '') + '</textarea></label>' +
+          '<label class="field"><span>שאלות (שאלה בכל שורה)</span><textarea name="qs" rows="6">' + esc(p ? (p.questions || []).join('\n') : '') + '</textarea></label>',
+        onOk: f => {
+          const title = fv(f, 'title'); if (!title) return 'צריך שם';
+          const days = readDays(f, 'days'); if (days == null) return 'לפחות חצי יום';
+          if (parts.some((x, k) => k !== i && x.title.trim() === title)) return 'כבר יש חלק בשם הזה';
+          const n = { id: p ? p.id : uid(), title, days, desc: fv(f, 'desc'), questions: fv(f, 'qs').split(/\r?\n/).map(x => x.trim()).filter(Boolean) };
+          if (p) parts[i] = n; else parts.push(n);
+          put('settings', { id: 'plan', parts });
+        }
+      });
+    },
+    planDel(el) {
+      const parts = planParts().slice(), i = +el.dataset.i;
+      confirmDlg('מחיקת חלק', 'למחוק את "' + esc(parts[i].title) + '" מהתכנית? נחפפים שכבר קיבלו אותו לא יושפעו.', 'מחיקה', () => { parts.splice(i, 1); put('settings', { id: 'plan', parts }); });
+    },
+    planMove(el) {
+      const parts = planParts().slice(), i = +el.dataset.i, j = i + (+el.dataset.dir);
+      if (j < 0 || j >= parts.length) return;
+      [parts[i], parts[j]] = [parts[j], parts[i]]; put('settings', { id: 'plan', parts });
+    },
+    planApply() {
+      const ts = trainees();
+      if (!ts.length) { toast('עוד אין נחפפים'); return; }
+      openDialog({
+        title: 'העתקת התכנית לנחפף', ok: 'העתקה',
+        body: '<label class="field"><span>נחפף</span><select name="tid">' + ts.map(t => '<option value="' + t.id + '">' + esc(t.name) + '</option>').join('') + '</select><small>יתווספו רק חלקים שעוד אין לו (לפי שם).</small></label>',
+        onOk: f => { const n = applyPlan(fv(f, 'tid')); toast(n ? 'נוספו ' + n + ' חלקים' : 'כל החלקים כבר קיימים אצלו'); }
+      });
+    },
+
+    exportCsv() {
+      const m = me();
+      const rows = [['נחפף', 'חופף אישי', 'חלק', 'ימים מוקצבים', 'ימי הארכה', 'סה"כ מוקצב', 'מצב', 'התחלה', 'דדליין', 'סיום', 'ימי עבודה בפועל', 'באיחור', 'סיבות הארכה']];
+      visibleTrainees(m).forEach(t => sprintsOf(t.id).forEach(s => {
+        const i = sprintInfo(s);
+        rows.push([t.name, userName(t.mentorId), s.title, s.days, extTotal(s), i.total, SP_STATUS[sprintState(s, i)][0], s.startDate || '', i.deadline || '', s.doneDate || '',
+          i.used == null ? '' : i.used, (i.overdue || i.late) ? 'כן' : 'לא', (s.extensions || []).map(e => e.days + ': ' + e.reason).join(' | ')]);
+      }));
+      const csv = '﻿' + rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+      a.download = 'דוח-חפיפה-' + todayISO() + '.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    }
+  };
+
+  const FORM = {
+    async setup(f) {
+      if (ui.busy) return;
+      const name = fv(f, 'name'), pw = f.elements.pw.value, pw2 = f.elements.pw2.value;
+      if (!name) { ui.loginErr = 'צריך שם'; render(); return; }
+      if (pw.length < PW_MIN) { ui.loginErr = 'הסיסמה צריכה להיות לפחות ' + PW_MIN + ' תווים'; render(); return; }
+      if (pw !== pw2) { ui.loginErr = 'הסיסמאות לא זהות'; render(); return; }
+      ui.loginErr = '';
+      if (useCloud) {
+        ui.busy = true; render();
+        try { await cloudSetup(name, pw); } catch (e) { ui.loginErr = authError(e); }
+        ui.busy = false; location.hash = '#/users'; render();
+        if (!ui.loginErr) toast('ברוך הבא! עכשיו אפשר להוסיף משתמשים ✨');
+        return;
+      }
+      const salt = uid(), u = { id: uid(), name, role: 'admin', salt, passHash: hashPw(pw, salt), createdAt: Date.now() };
+      lsSet(LS_SESSION, u.id);
+      put('users', u);
+      location.hash = '#/users';
+      toast('ברוך הבא! עכשיו אפשר להוסיף משתמשים ✨');
+    },
+    async login(f) {
+      if (ui.busy) return;
+      const u = loginPeople().find(x => x.id === ui.loginId); if (!u) { ui.loginId = null; render(); return; }
+      const pw = f.elements.pw.value, first = !hasAccount(u);
+      if (first) {
+        if (pw.length < PW_MIN) { ui.loginErr = 'הסיסמה צריכה להיות לפחות ' + PW_MIN + ' תווים'; render(); return; }
+        if (pw !== f.elements.pw2.value) { ui.loginErr = 'הסיסמאות לא זהות'; render(); return; }
+      }
+      if (useCloud) {
+        const code = first ? fv(f, 'code') : '';
+        if (first && !/^\d{6}$/.test(code)) { ui.loginErr = 'הקוד הוא 6 ספרות שקיבלתם מהחופף הראשי'; render(); return; }
+        ui.busy = true; ui.loginErr = ''; render();
+        try { if (first) await cloudClaim(u.id, code, pw); else await cloudSignIn(u.id, pw); ui.loginId = null; location.hash = '#/'; }
+        catch (e) { ui.loginErr = authError(e); }
+        ui.busy = false; render();
+        return;
+      }
+      if (first) {
+        const salt = uid();
+        put('users', Object.assign({}, u, { salt, passHash: hashPw(pw, salt) }));
+      } else if (hashPw(pw, u.salt || '') !== u.passHash) {
+        ui.loginErr = 'הסיסמה לא נכונה 🙈'; render(); const p = $('lg-pw'); if (p) p.focus(); return;
+      }
+      lsSet(LS_SESSION, u.id); ui.loginId = null; ui.loginErr = '';
+      location.hash = '#/'; render();
+    },
+    note(f) {
+      const ta = f.elements.text, text = ta.value.trim();
+      if (!text) { ta.focus(); return; }
+      ta.value = '';
+      put('messages', { id: uid(), traineeId: f.dataset.tid, fromId: me().id, text, color: ui.noteColor, at: Date.now() });
+      toast('המסר היומי נשלח 📮');
+    },
+    issue(f) {
+      const ta = f.elements.text, text = ta.value.trim();
+      if (!text) { ta.focus(); return; }
+      ta.value = '';
+      addIssue(f.dataset.tid, '', text);
+    },
+    groupAdd(f) {
+      const inp = f.elements.name, name = inp.value.trim();
+      if (!name) { inp.focus(); return; }
+      if (groups().some(g => g.name === name)) { toast('כבר יש קבוצה בשם הזה'); return; }
+      inp.value = '';
+      put('settings', { id: 'groups', list: groups().concat([{ id: uid(), name }]) });
+    },
+    qAdd(f) {
+      const inp = f.elements.text, text = inp.value.trim();
+      if (!text) { inp.focus(); return; }
+      inp.value = '';
+      put('questions', { id: uid(), traineeId: f.dataset.tid, sprintId: f.dataset.gid || null, text, status: 'todo', note: '', createdBy: me().id, createdAt: Date.now(), order: Date.now() });
+    },
+    newUser(f) {
+      const name = fv(f, 'name');
+      if (!name) { toast('צריך שם'); return; }
+      if (nameTaken(name)) { toast('כבר יש משתמש בשם הזה'); return; }
+      const role = f.elements.role.value;
+      const u = { id: uid(), name, role, gender: fv(f, 'gender') || null, passHash: null, salt: null, createdAt: Date.now() };
+      if (role === 'trainee') { u.mentorId = fv(f, 'mentor') || null; u.startDate = fv(f, 'start') || todayISO(); u.groupId = fv(f, 'group') || null; }
+      const withPlan = role === 'trainee' && f.elements.plan && f.elements.plan.checked;
+      f.elements.name.value = '';
+      if (useCloud) { delete u.passHash; delete u.salt; }
+      put('users', u);
+      let code = '';
+      if (useCloud) {
+        code = newCode();
+        pubSet('names', u.id, { name, gen: 0, gender: u.gender });
+        pubSet('invites', u.id, { code });
+      }
+      const n = withPlan ? applyPlan(u.id) : 0;
+      if (code) toast(name + ' ' + G(u, 'נוסף', 'נוספה', 'נוסף/ה') + '! קוד לכניסה הראשונה: ' + code + ' (מופיע גם בטבלה)');
+      else toast(name + ' ' + G(u, 'נוסף', 'נוספה', 'נוסף/ה') + (n ? ' עם ' + n + ' חלקים' : '') + '! בכניסה הראשונה תיבחר סיסמה ✨');
+    }
+  };
+
+  const CHANGE = {
+    setGender(el) {
+      const u = db.users[el.dataset.id]; if (!u) return;
+      put('users', Object.assign({}, u, { gender: el.value || null }));
+      if (useCloud && pub.names[u.id]) pubSet('names', u.id, { name: pub.names[u.id].name, gen: pub.names[u.id].gen || 0, gender: el.value || null });
+      toast('לשון הפנייה עודכנה');
+    },
+    setGroup(el) { const u = db.users[el.dataset.id]; if (u) { put('users', Object.assign({}, u, { groupId: el.value || null })); toast('הקבוצה עודכנה'); } },
+    setMentor(el) { const u = db.users[el.dataset.id]; if (u) { put('users', Object.assign({}, u, { mentorId: el.value || null })); toast('השיוך עודכן'); } },
+    noteColor(el) { ui.noteColor = el.value; }
+  };
+
+  document.addEventListener('click', e => {
+    const el = e.target.closest('[data-act]');
+    if (!el || el.disabled) return;
+    const fn = ACT[el.dataset.act];
+    if (fn) { e.preventDefault(); fn(el, e); }
+  });
+  document.addEventListener('submit', e => {
+    const f = e.target.closest('form[data-form]');
+    if (!f) return;
+    e.preventDefault();
+    const fn = FORM[f.dataset.form]; if (fn) fn(f);
+  });
+  document.addEventListener('change', e => {
+    const el = e.target.closest('[data-change]');
+    if (el && CHANGE[el.dataset.change]) CHANGE[el.dataset.change](el);
+  });
+  window.addEventListener('hashchange', () => { render(); window.scrollTo(0, 0); });
+  window.addEventListener('storage', e => {
+    if (DEMO) return;
+    if (e.key === LS_DB && !useCloud) { loadLocal(); render(); }
+    if (e.key === LS_SESSION) render();
+  });
+  let lastDay = todayISO();
+  setInterval(() => { if (todayISO() !== lastDay) { lastDay = todayISO(); render(); } }, 60000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
+
+  function buildDemo() {
+    const T = todayISO(), now = Date.now();
+    /* The work day n work days before today, so the sample always looks "live". */
+    const back = n => { let d = T, c = 0; while (c < n) { d = addDays(d, -1); c += dayValue(d); } return d; };
+    const U = (id, name, role, mentorId, start) => { db.users[id] = { id, name, role, mentorId: mentorId || null, startDate: start || null, passHash: 'demo', salt: 'demo', createdAt: now }; };
+    U('u_admin', 'שירה', 'admin'); U('u_avi', 'אבי', 'mentor'); U('u_michal', 'מיכל', 'mentor');
+    U('t_dana', 'דנה', 'trainee', 'u_avi', back(5)); U('t_yoni', 'יונתן', 'trainee', 'u_avi', back(10));
+    U('t_noa', 'נועה', 'trainee', 'u_michal', back(14)); U('t_omer', 'עומר', 'trainee', 'u_michal', back(3));
+    const parts = [
+      { id: 'p1', title: 'היכרות עם הסביבה', days: 2, desc: 'התקנות, הרשאות וסיור במשרד', questions: ['להתקין את סביבת הפיתוח', 'לקבל הרשאות לכל המערכות', 'לקרוא את מסמך הארכיטקטורה'] },
+      { id: 'p2', title: 'גיט ועבודה בצוות', days: 3, desc: 'איך עובדים אצלנו עם ענפים וסקירות קוד', questions: ['לפתוח ענף ראשון', 'לפתוח Pull Request ולקבל סקירה', 'להבין את תהליך השחרור', 'לתקן באג קטן מהרשימה'] },
+      { id: 'p3', title: 'פרויקט ראשון', days: 5, desc: 'משימה קטנה מקצה לקצה', questions: ['לכתוב אפיון קצר', 'לממש', 'לכתוב בדיקות', 'להציג לחופף'] },
+      { id: 'p4', title: 'הצגה לצוות', days: 1.5, desc: '', questions: ['להכין מצגת', 'להציג בפגישת צוות'] }
+    ];
+    db.settings.plan = { id: 'plan', parts };
+    const mk = (tid, i, st, start, done, qDone, ext) => {
+      const p = parts[i], sid = tid + '_s' + i;
+      db.sprints[sid] = { id: sid, traineeId: tid, title: p.title, desc: p.desc, days: p.days, status: st, startDate: start || null, doneDate: done || null, extensions: ext || [], order: i + 1, createdBy: 'u_admin', createdAt: now + i, fromPlan: true, planId: p.id, qCopied: st !== 'todo' };
+      if (st === 'todo') return;
+      p.questions.forEach((text, k) => {
+        const status = st === 'done' || k < qDone ? 'done' : k === qDone ? 'doing' : 'todo';
+        db.questions[sid + '_q' + k] = { id: sid + '_q' + k, traineeId: tid, sprintId: sid, text, status, note: k === 1 && st === 'active' ? 'שאלתי את אבי, מחכה לתשובה' : '', createdBy: 'u_admin', createdAt: now + k, order: k, doneAt: status === 'done' ? now : null };
+      });
+    };
+    mk('t_dana', 0, 'done', back(5), back(4), 0); mk('t_dana', 1, 'active', back(2), null, 1); mk('t_dana', 2, 'todo'); mk('t_dana', 3, 'todo');
+    mk('t_yoni', 0, 'done', back(10), back(8), 0); mk('t_yoni', 1, 'active', back(6), null, 2, [{ days: 1, reason: 'הייתה תקלה בהרשאות ולא יכולתי לעבוד יום שלם', by: 't_yoni', at: now - 86400000 * 2 }]); mk('t_yoni', 2, 'todo'); mk('t_yoni', 3, 'todo');
+    mk('t_noa', 0, 'done', back(14), back(13), 0); mk('t_noa', 1, 'done', back(12), back(10), 0); mk('t_noa', 2, 'active', back(3), null, 2); mk('t_noa', 3, 'todo');
+    mk('t_omer', 0, 'done', back(3), back(2), 0); mk('t_omer', 1, 'todo'); mk('t_omer', 2, 'todo'); mk('t_omer', 3, 'todo');
+    const msg = (id, tid, from, text, color, h) => { db.messages[id] = { id, traineeId: tid, fromId: from, text, color, at: now - h * 3600000 }; };
+    msg('m1', 't_dana', 't_dana', 'תודה על ההסבר על גיט אתמול, סוף סוף הבנתי 💛', 'c1', 20);
+    msg('m2', 't_dana', 'u_avi', 'את מתקדמת מעולה, כל הכבוד! 🌸', 'c2', 3);
+    msg('m3', 't_yoni', 'u_avi', 'אל תדאג מההארכה, זה קורה לכולם ☕', 'c3', 5);
+    let away = addDays(T, 1); while (baseValue(away) !== 1) away = addDays(away, 1);
+    let away2 = addDays(away, 1); while (baseValue(away2) !== 1) away2 = addDays(away2, 1);
+    db.absences.t_dana = { id: 't_dana', days: { [away]: { half: true, note: 'תור לרופא' } } };
+    db.absences.t_noa = { id: 't_noa', days: { [T]: { half: false, note: 'מילואים' }, [away]: { half: false, note: 'מילואים' } } };
+    db.absences.t_omer = { id: 't_omer', days: { [away2]: { half: true, note: '' } } };
+    db.settings.groups = { id: 'groups', list: [{ id: 'g1', name: 'שכבה א׳' }, { id: 'g2', name: 'שכבה ב׳' }] };
+    Object.entries({ u_admin: 'f', u_avi: 'm', u_michal: 'f', t_dana: 'f', t_yoni: 'm', t_noa: 'f', t_omer: 'm' }).forEach(([id, g]) => { db.users[id].gender = g; });
+    db.issues.i3 = { id: 'i3', traineeId: 't_dana', fromId: 't_dana', questionId: 't_dana_s1_q1', questionText: 'לפתוח Pull Request ולקבל סקירה', sprintId: 't_dana_s1', text: 'אין לי הרשאת כתיבה למאגר, אז אי אפשר לפתוח PR', status: 'open', at: now - 2 * 3600000 };
+    db.users.t_dana.groupId = 'g1'; db.users.t_yoni.groupId = 'g1'; db.users.t_noa.groupId = 'g2'; db.users.t_omer.groupId = 'g2';
+    db.issues.i1 = { id: 'i1', traineeId: 't_yoni', fromId: 't_yoni', questionId: 't_yoni_s1_q2', questionText: 'להבין את תהליך השחרור', sprintId: 't_yoni_s1', text: 'הקישור למסמך השחרור בוויקי מחזיר שגיאה, ואין לי למי לפנות', status: 'open', at: now - 3 * 3600000 };
+    db.issues.i2 = { id: 'i2', traineeId: 't_dana', fromId: 't_dana', text: 'קשה לי לעקוב אחרי כל ההודעות בקבוצת הצוות', status: 'resolved', reply: 'נשב על זה בשיחה האישית 🙂', resolvedBy: 'u_avi', at: now - 50 * 3600000, resolvedAt: now - 30 * 3600000 };
+    db.talks.k1 = { id: 'k1', mentorId: 'u_avi', traineeId: 't_dana', date: T, time: '14:00', repeat: 14, note: 'שיחת מעקב', createdAt: now };
+    db.talks.k2 = { id: 'k2', mentorId: 'u_avi', traineeId: 't_yoni', date: addDays(T, 3), time: '10:30', repeat: 0, note: 'לדבר על ההארכה', createdAt: now };
+    db.talks.k3 = { id: 'k3', mentorId: 'u_michal', traineeId: 't_noa', date: addDays(T, 1), time: '12:00', repeat: 7, note: '', createdAt: now };
+    lsSet(LS_SESSION, { admin: 'u_admin', mentor: 'u_avi', trainee: 't_dana' }[DEMO]);
+    syncState = 'demo';
+  }
+
+  if (DEMO) buildDemo(); else if (useCloud) initCloud(); else loadLocal();
+  render();
+
+  /* Small hook for self-checks from the console. */
+  window.__hafifa = { sha256, dayValue, deadlineOf, sprintInfo, unitsBetween };
+})();
+</script>
+</body>
+</html>
