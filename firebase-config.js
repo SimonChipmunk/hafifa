@@ -12,7 +12,14 @@
 // אפשר להשתמש באותו פרויקט Firebase של אפליקציה אחרת. הנתונים של האתר הזה נשמרים
 // באוספים שמתחילים ב- hafifa_ ולא מתערבבים עם שום דבר אחר.
 
-
+const firebaseConfig = {
+  apiKey: "AIzaSyCLb35SNSGCkepMQ-Q7rfTdffbKR3m2z8A",
+  authDomain: "hafifa-2026.firebaseapp.com",
+  projectId: "hafifa-2026",
+  storageBucket: "hafifa-2026.firebasestorage.app",
+  messagingSenderId: "377912203393",
+  appId: "1:377912203393:web:77ed56a3aae756c0319580"
+};
 
 // ---- אל תשנו מכאן והלאה ----
 window.FIREBASE_CONFIG = (typeof firebaseConfig !== 'undefined') ? firebaseConfig : null;
