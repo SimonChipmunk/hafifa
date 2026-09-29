@@ -1292,14 +1292,15 @@
   }
 
   function weekCard(t, m) {
-    const edit = canEdit(m, t), today = todayISO();
+    /* The trainee does not see how days are counted (full / half day); mentors do. */
+    const edit = canEdit(m, t), today = todayISO(), counts = m.id !== t.id;
     let days = '';
     for (let k = 0; k < 7; k++) {
       const d = addDays(today, k), wd = parse(d).getDay(), weekend = wd >= 5, hol = absEntry('_global', d), abs = absEntry(t.id, d);
       const fullHol = hol && !hol.half;
       const st = weekend ? 'weekend' : fullHol ? 'holiday' : abs ? (abs.half ? 'half' : 'away') : hol ? 'holiday' : 'in';
       const lbl = weekend ? 'סופ״ש' : fullHol ? esc(hol.note || 'חג / יום חופש') : abs ? esc(absLabel(abs)) : hol ? esc((hol.note || 'חג') + ' · חצי יום') : 'במאמן';
-      const v = dayValue(d, t.id), val = v ? (v === 1 ? '1' : '½') : '';
+      const v = dayValue(d, t.id), val = v && counts ? (v === 1 ? '1' : '½') : '';
       days += '<button class="day ' + st + (k === 0 ? ' today' : '') + '" ' + (!edit || weekend || fullHol ? 'disabled' : '') +
         ' data-act="toggleAbs" data-tid="' + t.id + '" data-date="' + d + '" aria-pressed="' + !!abs + '">' +
         '<span class="d-name">' + (k === 0 ? 'היום' : DAY_SHORT[wd] + '׳') + '</span><span class="d-num">' + dm(d) + '</span>' +
@@ -1307,7 +1308,7 @@
     }
     return '<section class="card week"><div class="card-head"><h2>🗓️ השבוע הקרוב</h2><a class="link" href="#/t/' + t.id + '/calendar">ללוח השנה</a></div>' +
       '<p class="hint">' + (edit ? 'לחיצה על יום: לא במאמן כל היום. לחיצה נוספת: רק חצי יום. לחיצה שלישית: ביטול. הפורטנייט יתעדכן לבד.' : 'הימים שבהם ' + esc(t.name) + ' לא ' + G(t, 'נמצא', 'נמצאת', 'נמצא/ת') + ' במאמן.') + '</p>' +
-      '<div class="days">' + days + '</div><p class="legend"><span>א׳–ד׳ = יום שלם</span><span>ה׳ = חצי יום</span><span>ו׳–ש׳ לא נספרים</span></p></section>';
+      '<div class="days">' + days + '</div>' + (counts ? '<p class="legend"><span>א׳–ד׳ = יום שלם</span><span>ה׳ = חצי יום</span><span>ו׳–ש׳ לא נספרים</span></p>' : '') + '</section>';
   }
 
   function notesCard(t, m) {
@@ -1411,6 +1412,8 @@
 
   /* ---------- Calendar ---------- */
   function calendarGrid(key, tid, editable, deadlines) {
+    /* A trainee's own calendar (deadlines off) hides how many work days each day counts for. */
+    const counts = !tid || deadlines;
     const today = todayISO(), month = ui.cal[key] || today.slice(0, 7);
     const [y, mo] = month.split('-').map(Number);
     const first = new Date(y, mo - 1, 1), daysIn = new Date(y, mo, 0).getDate();
@@ -1432,7 +1435,7 @@
       const cls = ['cell', weekend ? 'weekend' : '', isHol ? 'holiday' : '', isAbs ? (abs.half ? 'half' : 'away') : '', !tid && hol && hol.half ? 'half' : '', d === today ? 'today' : ''].join(' ');
       const clickable = editable && !weekend && (tid ? !fullHol : true);
       const lbl = isAbs ? absLabel(abs) : isHol ? (hol.note || 'חג') + (hol.half ? ' · חצי יום' : '') : '';
-      const inner = '<span class="c-top"><span class="c-n">' + n + '</span>' + (v ? '<span class="c-v">' + (v === 1 ? 'יום' : '½') + '</span>' : '') + '</span>' +
+      const inner = '<span class="c-top"><span class="c-n">' + n + '</span>' + (v && counts ? '<span class="c-v">' + (v === 1 ? 'יום' : '½') + '</span>' : '') + '</span>' +
         (lbl ? '<span class="c-lbl">' + esc(lbl) + '</span>' : '') + (ev[d] || []).map(e => '<span class="ev ' + e.c + '" title="' + esc(e.txt) + '">' + esc(e.txt) + '</span>').join('');
       const aria = fmtDate(d) + (lbl ? ', ' + lbl : '');
       cells += clickable
@@ -1446,7 +1449,7 @@
       '<div class="cal-grid">' + cells + '</div>' +
       '<p class="legend"><span><i style="background:var(--bad-soft)"></i>לא במאמן</span><span><i style="background:var(--warn-soft)"></i>חצי יום</span><span><i style="background:var(--info-soft)"></i>חג / חופש כללי</span>' +
       (tid ? '<span><i style="background:var(--accent-soft)"></i>▶ התחלת פורטנייט</span>' + (deadlines ? '<span>🏁 דדליין</span>' : '') + '<span><i style="background:var(--ok-soft)"></i>✓ הסתיים</span>' : '') +
-      '<span>· ' + fmtNum(work) + ' ימי עבודה בחודש</span></p></section>';
+      (counts ? '<span>· ' + fmtNum(work) + ' ימי עבודה בחודש</span>' : '') + '</p></section>';
   }
   function markedList(key, canDel, emptyText) {
     const today = todayISO(), map = absMap(key);
