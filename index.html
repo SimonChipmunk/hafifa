@@ -1463,7 +1463,7 @@
     return '<div class="layout"><div class="main-col">' + calendarGrid(t.id, t.id, edit, m.id !== t.id) + '</div><aside class="side-col"><section class="card">' +
       '<h2 style="margin-bottom:8px">🏖️ ימים מחוץ למאמן</h2>' +
       (edit ? '<p class="hint">לחיצה על יום בלוח: לא במאמן כל היום. לחיצה נוספת: רק חצי יום. לחיצה שלישית: ביטול. הפורטנייט יתעדכן לבד.</p>' +
-        '<label class="field"><span>סיבה (לא חובה)</span><input type="text" id="absNote-' + t.id + '" data-keep maxlength="40" placeholder="למשל: מילואים, חופשה, קורס"></label>' : '') +
+        '<label class="field"><span>סיבה (לא חובה)</span><input type="text" id="absNote-' + t.id + '" data-keep maxlength="40"></label>' : '') +
       '<h3 style="font-size:.95rem;margin:4px 0 8px">הימים הקרובים שסומנו</h3>' + markedList(t.id, edit, 'לא סומנו ימים.') +
       '</section></aside></div>';
   }
