@@ -2162,19 +2162,40 @@
 
     planEdit(el) {
       const parts = planParts().slice(), i = +el.dataset.i, p = parts[i];
+      /* Where the part goes: new parts default to the end; an edited part stays put unless moved or swapped. */
+      const others = parts.filter((x, k) => k !== i);
+      const pos = '<label class="field"><span>מיקום בתכנית</span><select name="pos">' +
+        (p ? '<option value="keep" selected>להשאיר במקום (' + (i + 1) + ')</option>' : '') +
+        '<optgroup label="להעביר ל...">' +
+        '<option value="end"' + (p ? '' : ' selected') + '>בסוף' + (p ? '' : ' (ברירת מחדל)') + '</option>' +
+        (others.length ? '<option value="start">ראשון</option>' : '') +
+        others.map(x => '<option value="after:' + x.id + '">אחרי "' + esc(x.title) + '"</option>').join('') + '</optgroup>' +
+        (p && others.length ? '<optgroup label="להחליף מקום עם...">' + others.map(x => '<option value="swap:' + x.id + '">"' + esc(x.title) + '" (' + (parts.indexOf(x) + 1) + ')</option>').join('') + '</optgroup>' : '') +
+        '</select></label>';
       openDialog({
         title: p ? 'עריכת חלק' : 'חלק חדש בתכנית', ok: p ? 'שמירה' : 'הוספה',
         body: '<label class="field"><span>שם החלק</span><input type="text" name="title" maxlength="80" value="' + esc(p ? p.title : '') + '"></label>' +
           daysField('days', 'ימים מוקצבים', p ? p.days : 1, 'א׳–ד׳ נחשבים יום, ה׳ חצי יום') +
           '<label class="field"><span>תיאור (לא חובה)</span><textarea name="desc" maxlength="500">' + esc(p ? p.desc || '' : '') + '</textarea></label>' +
-          '<label class="field"><span>שאלות (שאלה בכל שורה)</span><textarea name="qs" rows="6">' + esc(p ? (p.questions || []).join('\n') : '') + '</textarea></label>',
+          '<label class="field"><span>שאלות (שאלה בכל שורה)</span><textarea name="qs" rows="6">' + esc(p ? (p.questions || []).join('\n') : '') + '</textarea></label>' + pos,
         onOk: f => {
           const title = fv(f, 'title'); if (!title) return 'צריך שם';
           const days = readDays(f, 'days'); if (days == null) return 'לפחות חצי יום';
           if (parts.some((x, k) => k !== i && x.title.trim() === title)) return 'כבר יש חלק בשם הזה';
           const n = { id: p ? p.id : uid(), title, days, desc: fv(f, 'desc'), questions: fv(f, 'qs').split(/\r?\n/).map(x => x.trim()).filter(Boolean) };
-          if (p) parts[i] = n; else parts.push(n);
-          put('settings', { id: 'plan', parts });
+          const where = fv(f, 'pos') || 'end';
+          let list;
+          if (where === 'keep') { list = parts.slice(); list[i] = n; }
+          else if (where.startsWith('swap:')) {
+            list = parts.slice(); const j = list.findIndex(x => x.id === where.slice(5));
+            list[i] = list[j]; list[j] = n;
+          } else {
+            list = others.slice();
+            const at = where === 'start' ? 0 : where.startsWith('after:') ? list.findIndex(x => x.id === where.slice(6)) + 1 : list.length;
+            list.splice(at, 0, n);
+          }
+          put('settings', { id: 'plan', parts: list });
+          if (p && where !== 'keep') toast('המיקום בתכנית עודכן');
         }
       });
     },
