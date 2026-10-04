@@ -1203,8 +1203,9 @@
     };
     let main;
     if (cur) {
-      /* Only the first running fortnight here; parallel ones live in the checklist. The trainee may pick up the next one alongside. */
-      main = nowCard(cur) + (sm.next ? '<div class="row" style="margin-top:10px"><button class="btn ghost sm" data-act="startSprint" data-id="' + sm.next.id + '">＋ להתחיל עוד פורטנייט במקביל</button></div>' : '');
+      /* Every running fortnight gets its own card; the trainee may also pick up the next one alongside. */
+      main = '<div class="sprints">' + actives.map(nowCard).join('') + '</div>' +
+        (sm.next ? '<div class="row" style="margin-top:10px"><button class="btn ghost sm" data-act="startSprint" data-id="' + sm.next.id + '">＋ להתחיל עוד פורטנייט במקביל</button></div>' : '');
     } else if (sm.next) {
       main = '<section class="card now"><div class="eyebrow">החלק הבא</div><h2 class="now-title">' + esc(sm.next.title) + '</h2>' + (sm.next.desc ? '<p class="muted">' + esc(sm.next.desc) + '</p>' : '') +
         '<div class="row" style="margin-top:14px"><button class="btn primary" data-act="startSprint" data-id="' + sm.next.id + '">▶ מתחילים</button></div></section>';
