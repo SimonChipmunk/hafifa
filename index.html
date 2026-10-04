@@ -497,6 +497,7 @@
   .dlg-actions { display: flex; gap: 8px; justify-content: flex-start; margin-top: 8px; }
   .dlg-prev { background: var(--accent-soft); color: var(--accent); border-radius: 12px; padding: 10px 14px; font-size: .9rem; font-weight: 500; margin-bottom: 14px; }
   .dlg-prev:empty { display: none; }
+  .dlg-note { background: var(--info-soft); color: var(--info); border-radius: 12px; padding: 10px 14px; font-size: .9rem; font-weight: 500; margin-bottom: 14px; }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
 
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 20px); background: var(--text); color: var(--bg); padding: 12px 20px; border-radius: 14px; font-weight: 500; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 50; max-width: calc(100vw - 32px); text-align: center; }
@@ -903,6 +904,7 @@
     };
   }
   function stageText(sm, t) {
+    if (sm.active.length > 1) return sm.active.map(x => x.s.title).join(' · ');
     if (sm.current) return sm.current.s.title;
     if (sm.next) return 'הבא בתור: ' + sm.next.title;
     if (sm.status === 'finished') return G(t, 'סיים', 'סיימה', 'סיים/ה') + ' את כל החלקים';
@@ -1183,21 +1185,26 @@
 
   /* The trainee's own page: progress first, no countdowns or "late" marks. */
   function traineeHome(t, m) {
-    const sm = summary(t), cur = sm.active[0] ? sm.active[0].s : null;
-    const [qd, qn] = cur ? qStats(t, cur) : [0, 0];
+    /* Several fortnights can run side by side; each gets its own card. */
+    const sm = summary(t), actives = sm.active.map(x => x.s), cur = actives[0] || null;
+    const [qd, qn] = actives.reduce((a, s) => { const [d, n] = qStats(t, s); return [a[0] + d, a[1] + n]; }, [0, 0]);
     const [g, ge] = greeting();
     const enc = encourage(sm, qd, qn, t);
     const hello = '<div class="hello"><h1>' + g + ', ' + esc(t.name) + ' ' + ge + '</h1>' + (enc ? '<p>' + enc + '</p>' : '') + '</div>';
+    const nowCard = s => {
+      const i = sprintInfo(s), [d, n] = qStats(t, s), pct = n ? Math.round(d / n * 100) : 0;
+      return '<section class="card now"><div class="eyebrow">עכשיו אני בפורטנייט</div><h2 class="now-title">' + esc(s.title) + '</h2>' + (s.desc ? '<p class="muted">' + esc(s.desc) + '</p>' : '') +
+        /* No questions in this part: no count, ring or bar at all. */
+        '<div class="now-body">' + (n ? progressRing(pct) : '') + '<div class="sp-facts">' +
+        (n ? '<div class="big-line">' + d + ' מתוך ' + n + ' שאלות</div><div class="bar big" role="img" aria-label="' + pct + '% מהשאלות בוצעו"><i style="width:' + pct + '%"></i></div>' : '') +
+        (!i.overdue && i.deadline ? '<div class="facts">מתוכנן עד ' + fmtDate(i.deadline) + '</div>' : '') +
+        '<div class="row"><a class="btn soft" href="#/t/' + t.id + '/questions">לצ׳קליסט ✅</a><button class="btn primary" data-act="finishSprint" data-id="' + s.id + '">סיימתי! 🎉</button></div>' +
+        '</div></div></section>';
+    };
     let main;
     if (cur) {
-      const i = sprintInfo(cur), pct = qn ? Math.round(qd / qn * 100) : 0;
-      main = '<section class="card now"><div class="eyebrow">עכשיו אני בפורטנייט</div><h2 class="now-title">' + esc(cur.title) + '</h2>' + (cur.desc ? '<p class="muted">' + esc(cur.desc) + '</p>' : '') +
-        /* No questions in this part: no count, ring or bar at all. */
-        '<div class="now-body">' + (qn ? progressRing(pct) : '') + '<div class="sp-facts">' +
-        (qn ? '<div class="big-line">' + qd + ' מתוך ' + qn + ' שאלות</div><div class="bar big" role="img" aria-label="' + pct + '% מהשאלות בוצעו"><i style="width:' + pct + '%"></i></div>' : '') +
-        (!i.overdue && i.deadline ? '<div class="facts">מתוכנן עד ' + fmtDate(i.deadline) + '</div>' : '') +
-        '<div class="row"><a class="btn soft" href="#/t/' + t.id + '/questions">לצ׳קליסט ✅</a><button class="btn primary" data-act="finishSprint" data-id="' + cur.id + '">סיימתי! 🎉</button></div>' +
-        '</div></div></section>';
+      /* Only the first running fortnight here; parallel ones live in the checklist. The trainee may pick up the next one alongside. */
+      main = nowCard(cur) + (sm.next ? '<div class="row" style="margin-top:10px"><button class="btn ghost sm" data-act="startSprint" data-id="' + sm.next.id + '">＋ להתחיל עוד פורטנייט במקביל</button></div>' : '');
     } else if (sm.next) {
       main = '<section class="card now"><div class="eyebrow">החלק הבא</div><h2 class="now-title">' + esc(sm.next.title) + '</h2>' + (sm.next.desc ? '<p class="muted">' + esc(sm.next.desc) + '</p>' : '') +
         '<div class="row" style="margin-top:14px"><button class="btn primary" data-act="startSprint" data-id="' + sm.next.id + '">▶ מתחילים</button></div></section>';
@@ -1223,18 +1230,20 @@
   }
   /* What a mentor sees for one trainee: the deadline picture comes first. */
   function sprintsTab(t, m) {
-    const sm = summary(t), mgr = canManage(m, t), cur = sm.current;
-    let focus;
-    if (cur) {
+    const sm = summary(t), mgr = canManage(m, t);
+    /* One focus card per running fortnight, late ones first. */
+    const running = sm.overdue.concat(sm.active.filter(x => !x.i.overdue));
+    const focusCard = cur => {
       const [qd, qn] = qStats(t, cur.s), ext = extTotal(cur.s);
-      focus = '<section class="card overview mgr-focus ' + (cur.i.overdue ? 'is-late' : '') + '"><div class="ov-top"><div><div class="eyebrow">הפורטנייט הנוכחי</div><h2>' + esc(cur.s.title) + '</h2></div>' + badge(tStatus(sm.status, t)) + '</div>' +
+      const st = cur.i.overdue ? ['באיחור', 'bad'] : cur.i.noDeadline ? ['בעבודה', 'info'] : ['בזמן', 'ok'];
+      return '<section class="card overview mgr-focus ' + (cur.i.overdue ? 'is-late' : '') + '"><div class="ov-top"><div><div class="eyebrow">' + (running.length > 1 ? 'פורטנייט פעיל' : 'הפורטנייט הנוכחי') + '</div><h2>' + esc(cur.s.title) + '</h2></div>' + badge(st) + '</div>' +
         '<div class="mf-grid"><div><div class="eyebrow">זמן</div><b class="' + (cur.i.overdue ? 'bad-t' : '') + '">' + remainingText(cur.i, cur.s) + '</b></div>' +
         '<div><div class="eyebrow">דדליין</div><b>' + (cur.i.noDeadline ? 'ללא' : cur.i.deadline ? fmtDate(cur.i.deadline) : '—') + '</b></div>' +
         (cur.i.noDeadline ? '' : '<div><div class="eyebrow">מוקצב</div><b>' + daysText(cur.i.total) + (ext ? ' <span class="muted sm">כולל ' + daysText(ext) + ' הארכה</span>' : '') + '</b></div>') +
         '<div><div class="eyebrow">צ׳קליסט</div><b>' + qd + '/' + qn + '</b></div></div></section>';
-    } else {
-      focus = '<section class="card overview"><div class="ov-top"><div><div class="eyebrow">הפורטנייט הנוכחי</div><h2>' + esc(stageText(sm, t)) + '</h2></div>' + badge(tStatus(sm.status, t)) + '</div></section>';
-    }
+    };
+    const focus = running.length ? '<div class="sprints">' + running.map(focusCard).join('') + '</div>'
+      : '<section class="card overview"><div class="ov-top"><div><div class="eyebrow">הפורטנייט הנוכחי</div><h2>' + esc(stageText(sm, t)) + '</h2></div>' + badge(tStatus(sm.status, t)) + '</div></section>';
     const nextTalk = upcomingTalks(k => k.traineeId === t.id)[0], issues = openIssues(t.id).length;
     const meta = '<div class="ov-meta" style="margin:12px 4px 0"><span>חלקים שהושלמו: <b>' + sm.done + '/' + sm.total + '</b></span>' +
       (sm.lateDone ? '<span>הסתיימו באיחור: <b>' + sm.lateDone + '</b></span>' : '') +
@@ -1378,8 +1387,11 @@
       const shown = g.s && g.s.status === 'active' && f !== 'all' ? all.filter(q => q.status === f) : all;
       const gd = all.filter(q => q.status === 'done').length;
       const state = g.s ? sprintState(g.s, sprintInfo(g.s)) : null;
-      return '<section class="card q-group"><div class="q-group-head"><h2>' + esc(g.title) + '</h2>' + (state ? badge(SP_STATUS[state]) : '') +
-        (all.length ? '<span class="muted sm">' + gd + '/' + all.length + '</span><div class="bar"><i style="width:' + Math.round(gd / all.length * 100) + '%"></i></div>' : '') + '</div>' +
+      /* The trainee never sees "late"; each running fortnight can be finished right from its checklist. */
+      const shownState = self && state === 'overdue' ? 'active' : state;
+      return '<section class="card q-group"><div class="q-group-head"><h2>' + esc(g.title) + '</h2>' + (shownState ? badge(SP_STATUS[shownState]) : '') +
+        (all.length ? '<span class="muted sm">' + gd + '/' + all.length + '</span><div class="bar"><i style="width:' + Math.round(gd / all.length * 100) + '%"></i></div>' : '') +
+        (self && g.s && g.s.status === 'active' ? '<button class="btn primary sm" style="margin-inline-start:auto" data-act="finishSprint" data-id="' + g.s.id + '">סיימתי! 🎉</button>' : '') + '</div>' +
         (shown.length ? '<ul class="qs">' + shown.map(q => qRow(q, m, edit, mgr)).join('') + '</ul>' : (all.length ? '<p class="hint" style="margin:0">אין כאן שאלות בסינון הזה</p>' : mgr ? '<p class="hint" style="margin:0">עוד אין שאלות בחלק הזה</p>' : '')) +
         (edit ? '<form class="q-add" data-form="qAdd" data-tid="' + t.id + '" data-gid="' + g.id + '"><input type="text" id="qadd-' + t.id + '-' + (g.id || 'gen') + '" name="text" data-keep maxlength="300" placeholder="שאלה חדשה…" aria-label="שאלה חדשה ב' + esc(g.title) + '"><button class="btn soft">הוספה</button>' +
           (mgr ? '<button type="button" class="btn ghost" data-act="qBulk" data-tid="' + t.id + '" data-gid="' + g.id + '" title="הוספת כמה שאלות בבת אחת">כמה בבת אחת</button>' : '') + '</form>' : '') +
@@ -1741,7 +1753,7 @@
       const s = make(f);
       if (!s) { out.textContent = ''; return; }
       const d = deadlineOf(s);
-      out.textContent = d ? 'לפי ימי העבודה שלך, צריך לסיים עד ' + fmtDate(d) + ' 🏁' : '';
+      out.textContent = d ? 'לפי ימי העבודה של הנחפף, צריך לסיים עד ' + fmtDate(d) + ' 🏁' : '';
     };
     f.addEventListener('input', upd); upd();
   }
@@ -1919,11 +1931,13 @@
     startSprint(el) {
       const s = db.sprints[el.dataset.id]; if (!s) return;
       const m = me(), mgr = canManage(m, db.users[s.traineeId]);
-      /* A trainee may only pick up the next part when nothing is running. */
-      if (!mgr && (m.id !== s.traineeId || sprintsOf(s.traineeId).some(x => x.status === 'active'))) return;
+      /* A trainee may only pick up the next part in line (alongside a running one if they want). */
+      if (!mgr && (m.id !== s.traineeId || (sprintsOf(s.traineeId).find(x => x.status === 'todo') || {}).id !== s.id)) return;
+      const parallel = sprintsOf(s.traineeId).some(x => x.status === 'active');
       openDialog({
         title: '▶ מתחילים את "' + esc(s.title) + '"', ok: 'יאללה, מתחילים!',
-        body: (mgr ? '<p class="muted" style="margin-bottom:12px">מוקצבים ' + daysText(totalDays(s)) + '. הימים שהנחפף סימן שלא יהיה במאמן לא נספרים.</p>' : '<p class="muted" style="margin-bottom:12px">השאלות של החלק הזה יופיעו בצ׳קליסט שלך.</p>') +
+        body: (parallel ? '<p class="dlg-note">' + (mgr ? 'כבר יש פורטנייט פעיל. הפורטנייט הזה ירוץ במקביל אליו.' : 'הפורטנייט הזה ירוץ במקביל לזה שכבר התחלת. השאלות של שניהם יופיעו בצ׳קליסט.') + '</p>' : '') +
+          (mgr ? '<p class="muted" style="margin-bottom:12px">מוקצבים ' + daysText(totalDays(s)) + '. הימים שהנחפף סימן שלא יהיה במאמן לא נספרים.</p>' : '<p class="muted" style="margin-bottom:12px">השאלות של החלק הזה יופיעו בצ׳קליסט שלך.</p>') +
           dateField('start', 'תאריך התחלה', todayISO()) + (mgr ? '<div class="dlg-prev"></div>' : ''),
         onOpen: f => { if (mgr) previewDeadline(f, f => { const d = fv(f, 'start'); return d ? Object.assign({}, s, { startDate: d }) : null; }); },
         onOk: f => {
