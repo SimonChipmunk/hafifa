@@ -455,6 +455,12 @@
   .day.half .d-val { color: var(--warn); }
   .cell.half { background: var(--warn-soft); border-color: transparent; }
   .cell.half .c-lbl { color: var(--warn); }
+  .day.scenario { background: var(--accent-soft); }
+  .day.scenario .d-st { color: var(--accent); }
+  .day.scenario:hover:not(:disabled) { border-color: var(--accent); }
+  .cell.scenario { background: var(--accent-soft); border-color: transparent; }
+  .cell.scenario .c-lbl { color: var(--accent); }
+  .att.scen { color: var(--accent); background: var(--accent-soft); }
 
   .sp-sec { font-size: .95rem; color: var(--muted); margin: 8px 0 -4px; }
 
@@ -775,7 +781,7 @@
   function absEntry(key, d) {
     const v = absMap(key)[d];
     if (v == null) return null;
-    return typeof v === 'object' ? { half: !!v.half, note: v.note || '' } : { half: false, note: v || '' };
+    return typeof v === 'object' ? { half: !!v.half && !v.scenario, scenario: !!v.scenario, note: v.note || '' } : { half: false, scenario: false, note: v || '' };
   }
   const baseValue = d => { const wd = parse(d).getDay(); return wd <= 3 ? 1 : wd === 4 ? 0.5 : 0; };
   /* Sunday–Wednesday count as a full day, Thursday as half, Friday/Saturday as nothing; holidays and marked absences take off a full or half day. */
@@ -788,7 +794,9 @@
     if (a) v = a.half ? Math.max(0, v - 0.5) : 0;
     return v;
   }
-  const absLabel = e => (e.half ? 'חצי יום לא במאמן' : 'לא במאמן') + (e.note ? ' · ' + e.note : '');
+  /* "In a scenario" (an exercise outside the office) does not count as a work day, like a full day away. */
+  const absLabel = e => (e.scenario ? 'בתרחיש' : e.half ? 'חצי יום לא במאמן' : 'לא במאמן') + (e.note ? ' · ' + e.note : '');
+  const absKind = e => e.scenario ? 'scenario' : e.half ? 'half' : 'away';
   function unitsBetween(a, b, tid) { let n = 0; for (let d = a, k = 0; d <= b && k < 3000; d = addDays(d, 1), k++) n += dayValue(d, tid); return n; }
   const extTotal = s => (s.extensions || []).reduce((a, e) => a + (+e.days || 0), 0);
   const totalDays = s => (+s.days || 0) + extTotal(s);
@@ -1333,7 +1341,7 @@
     for (let k = 0; k < 7; k++) {
       const d = addDays(today, k), wd = parse(d).getDay(), weekend = wd >= 5, hol = absEntry('_global', d), abs = absEntry(t.id, d);
       const fullHol = hol && !hol.half;
-      const st = weekend ? 'weekend' : fullHol ? 'holiday' : abs ? (abs.half ? 'half' : 'away') : hol ? 'holiday' : 'in';
+      const st = weekend ? 'weekend' : fullHol ? 'holiday' : abs ? absKind(abs) : hol ? 'holiday' : 'in';
       const lbl = weekend ? 'סופ״ש' : fullHol ? esc(hol.note || 'חג / יום חופש') : abs ? esc(absLabel(abs)) : hol ? esc((hol.note || 'חג') + ' · חצי יום') : 'במאמן';
       const v = dayValue(d, t.id), val = v && counts ? (v === 1 ? '1' : '½') : '';
       days += '<button class="day ' + st + (k === 0 ? ' today' : '') + '" ' + (!edit || weekend || fullHol ? 'disabled' : '') +
@@ -1342,7 +1350,7 @@
         '<span class="d-st">' + lbl + '</span>' + (val ? '<span class="d-val">' + val + '</span>' : '') + '</button>';
     }
     return '<section class="card week"><div class="card-head"><h2>🗓️ השבוע הקרוב</h2><a class="link" href="#/t/' + t.id + '/calendar">ללוח השנה</a></div>' +
-      '<p class="hint">' + (edit ? 'לחיצה על יום: לא במאמן כל היום. לחיצה נוספת: רק חצי יום. לחיצה שלישית: ביטול. הפורטנייט יתעדכן לבד.' : 'הימים שבהם ' + esc(t.name) + ' לא ' + G(t, 'נמצא', 'נמצאת', 'נמצא/ת') + ' במאמן.') + '</p>' +
+      '<p class="hint">' + (edit ? 'כל לחיצה על יום מחליפה: לא במאמן ← חצי יום ← בתרחיש ← במאמן. הפורטנייט יתעדכן לבד.' : 'הימים שבהם ' + esc(t.name) + ' לא ' + G(t, 'נמצא', 'נמצאת', 'נמצא/ת') + ' במאמן.') + '</p>' +
       '<div class="days">' + days + '</div>' + (counts ? '<p class="legend"><span>א׳–ד׳ = יום שלם</span><span>ה׳ = חצי יום</span><span>ו׳–ש׳ לא נספרים</span></p>' : '') + '</section>';
   }
 
@@ -1470,7 +1478,7 @@
       const d = month + '-' + pad(n), wd = parse(d).getDay(), weekend = wd >= 5, hol = absEntry('_global', d), abs = tid ? absEntry(tid, d) : null;
       const isHol = !!hol, isAbs = !!abs, fullHol = hol && !hol.half;
       const v = dayValue(d, tid); work += v;
-      const cls = ['cell', weekend ? 'weekend' : '', isHol ? 'holiday' : '', isAbs ? (abs.half ? 'half' : 'away') : '', !tid && hol && hol.half ? 'half' : '', d === today ? 'today' : ''].join(' ');
+      const cls = ['cell', weekend ? 'weekend' : '', isHol ? 'holiday' : '', isAbs ? absKind(abs) : '', !tid && hol && hol.half ? 'half' : '', d === today ? 'today' : ''].join(' ');
       const clickable = editable && !weekend && (tid ? !fullHol : true);
       const lbl = isAbs ? absLabel(abs) : isHol ? (hol.note || 'חג') + (hol.half ? ' · חצי יום' : '') : '';
       const inner = '<span class="c-top"><span class="c-n">' + n + '</span>' + (v && counts ? '<span class="c-v">' + (v === 1 ? 'יום' : '½') + '</span>' : '') + '</span>' +
@@ -1485,7 +1493,7 @@
       '<button class="icon-btn" data-act="calMove" data-key="' + key + '" data-d="-1" aria-label="החודש הקודם">→</button>' +
       '<button class="icon-btn" data-act="calMove" data-key="' + key + '" data-d="1" aria-label="החודש הבא">←</button></div>' +
       '<div class="cal-grid">' + cells + '</div>' +
-      '<p class="legend"><span><i style="background:var(--bad-soft)"></i>לא במאמן</span><span><i style="background:var(--warn-soft)"></i>חצי יום</span><span><i style="background:var(--info-soft)"></i>חג / חופש כללי</span>' +
+      '<p class="legend"><span><i style="background:var(--bad-soft)"></i>לא במאמן</span><span><i style="background:var(--warn-soft)"></i>חצי יום</span>' + (tid ? '<span><i style="background:var(--accent-soft)"></i>בתרחיש</span>' : '') + '<span><i style="background:var(--info-soft)"></i>חג / חופש כללי</span>' +
       (tid ? '<span><i style="background:var(--accent-soft)"></i>▶ התחלת פורטנייט</span>' + (deadlines ? '<span>🏁 דדליין</span>' : '') + '<span><i style="background:var(--ok-soft)"></i>✓ הסתיים</span>' : '') +
       (counts ? '<span>· ' + fmtNum(work) + ' ימי עבודה בחודש</span>' : '') + '</p></section>';
   }
@@ -1493,14 +1501,14 @@
     const today = todayISO(), map = absMap(key);
     const list = Object.keys(map).filter(d => d >= today).sort();
     if (!list.length) return '<p class="hint" style="margin:0">' + emptyText + '</p>';
-    return '<ul class="marked">' + list.slice(0, 30).map(d => { const e = absEntry(key, d); return '<li><b class="num">' + fmtDate(d) + '</b><span class="grow muted">' + (e.half ? 'חצי יום' + (e.note ? ' · ' : '') : '') + esc(e.note) + '</span>' +
+    return '<ul class="marked">' + list.slice(0, 30).map(d => { const e = absEntry(key, d); return '<li><b class="num">' + fmtDate(d) + '</b><span class="grow muted">' + (e.scenario ? 'בתרחיש' + (e.note ? ' · ' : '') : e.half ? 'חצי יום' + (e.note ? ' · ' : '') : '') + esc(e.note) + '</span>' +
       (canDel ? '<button class="icon-btn" data-act="toggleAbs" data-tid="' + key + '" data-date="' + d + '" data-clear="1" aria-label="הסרה">✕</button>' : '') + '</li>'; }).join('') + '</ul>';
   }
   function calendarTab(t, m) {
     const edit = canEdit(m, t);
     return '<div class="layout"><div class="main-col">' + calendarGrid(t.id, t.id, edit, m.id !== t.id) + '</div><aside class="side-col"><section class="card">' +
       '<h2 style="margin-bottom:8px">🏖️ ימים מחוץ למאמן</h2>' +
-      (edit ? '<p class="hint">לחיצה על יום בלוח: לא במאמן כל היום. לחיצה נוספת: רק חצי יום. לחיצה שלישית: ביטול. הפורטנייט יתעדכן לבד.</p>' +
+      (edit ? '<p class="hint">כל לחיצה על יום בלוח מחליפה: לא במאמן ← חצי יום ← בתרחיש ← במאמן. הפורטנייט יתעדכן לבד.</p>' +
         '<label class="field"><span>סיבה (לא חובה)</span><input type="text" id="absNote-' + t.id + '" data-keep maxlength="40"></label>' : '') +
       '<h3 style="font-size:.95rem;margin:4px 0 8px">הימים הקרובים שסומנו</h3>' + markedList(t.id, edit, 'לא סומנו ימים.') +
       '</section></aside></div>';
@@ -1639,6 +1647,7 @@
     const cell = (t, d) => {
       const hol = absEntry('_global', d), a = absEntry(t.id, d);
       if (hol && !hol.half) return '<td class="att hol" title="' + esc(hol.note || 'חג') + '">חג</td>';
+      if (a && a.scenario) return '<td class="att scen" title="' + esc(a.note || 'בתרחיש') + '">🎯 ' + (a.note ? '<span class="att-n">' + esc(a.note) + '</span>' : '') + '</td>';
       if (a && !a.half) return '<td class="att away" title="' + esc(a.note || 'לא במאמן') + '">✕ ' + (a.note ? '<span class="att-n">' + esc(a.note) + '</span>' : '') + '</td>';
       if (a || hol) return '<td class="att half" title="' + esc((a && a.note) || (hol && hol.note) || 'חצי יום') + '">½ ' + (a && a.note ? '<span class="att-n">' + esc(a.note) + '</span>' : '') + '</td>';
       return '<td class="att in">✓</td>';
@@ -1655,7 +1664,7 @@
     return '<div class="page-head"><div><h1>נוכחות במאמן 🏢</h1><p>מי נמצא במשרד בכל יום בשבוע, לפי מה שהנחפפים סימנו.</p></div>' +
       '<div class="row"><button class="icon-btn" data-act="attWeek" data-d="-7" aria-label="השבוע הקודם">→</button><b class="num">' + dm(days[0]) + ' עד ' + dm(days[4]) + '</b>' +
       '<button class="icon-btn" data-act="attWeek" data-d="7" aria-label="השבוע הבא">←</button>' + (sun !== thisSun ? '<button class="btn ghost sm" data-act="attWeek" data-d="0">השבוע</button>' : '') + '</div></div>' +
-      groupChips(all) + body + '<p class="legend"><span>✓ במאמן</span><span>½ חצי יום לא במאמן</span><span>✕ לא במאמן</span><span>חג = חופש לכולם</span></p>';
+      groupChips(all) + body + '<p class="legend"><span>✓ במאמן</span><span>½ חצי יום לא במאמן</span><span>✕ לא במאמן</span><span>🎯 בתרחיש</span><span>חג = חופש לכולם</span></p>';
   }
 
   /* ---------- Plan template (admin) ---------- */
@@ -1850,11 +1859,14 @@
     put('sprints', Object.assign({}, s, { status: 'active', startDate: d, doneDate: null, qCopied: true }));
     return nq;
   }
-  /* Absence cycle on a work day: in the office → away all day → away half a day → in the office. Thursday is already half, so it skips the half step. */
+  /* Absence cycle on a work day: in the office → away all day → away half a day → in a scenario → in the office.
+     Thursday is already half, so it skips the half step. Holidays (key '_global') have no scenario step. */
   function cycleAbsence(key, d, note) {
     const cur = db.absences[key], doc = { id: key, days: Object.assign({}, cur && cur.days) }, e = absEntry(key, d);
+    const scenario = key !== '_global', canHalf = baseValue(d) === 1;
     if (!e) doc.days[d] = { half: false, note };
-    else if (!e.half && baseValue(d) === 1) doc.days[d] = { half: true, note: e.note };
+    else if (!e.half && !e.scenario && canHalf) doc.days[d] = { half: true, note: e.note };
+    else if (!e.scenario && scenario) doc.days[d] = { half: false, scenario: true, note: e.note };
     else delete doc.days[d];
     put('absences', doc);
   }
